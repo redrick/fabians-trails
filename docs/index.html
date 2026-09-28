@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fabian's Trail · Fabiánova stezka</title>
+<meta name="description" content="A cosy nature-walk typing game for young children, set in the Brdy hills of the Czech Republic. Czech and English.">
+<meta property="og:title" content="Fabian's Trail · Fabiánova stezka">
+<meta property="og:description" content="A cosy nature-walk typing game for young children, set in the Brdy hills. Czech and English.">
+<meta property="og:image" content="https://redrick.github.io/fabians-trails/screenshots/title.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/cone_icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@500;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #c4e2f0;
+    --sky-deep: #9fcde3;
+    --cream: #fbf5e6;
+    --sand: #e8dcc2;
+    --paper: #fffaf0;
+    --bark: #5b331a;
+    --bark-soft: #7a4a2a;
+    --ink: #2f2418;
+    --muted: #6d5a45;
+    --sun: #f6c53d;
+    --sun-deep: #e2a918;
+    --moss: #3f8f47;
+    --rowan: #d9542b;
+    --line: #5b331a;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font: 1.2rem/1.55 "Patrick Hand", "Comic Neue", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .btn, .lang button, .rank b { font-family: "Shantell Sans", "Patrick Hand", sans-serif; }
+  h1, h2, h3 { color: var(--bark); line-height: 1.1; margin: 0 0 .5em; }
+  h2 { font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 800; }
+  h3 { font-size: 1.35rem; font-weight: 700; }
+  p { margin: 0 0 1em; }
+  a { color: var(--moss); }
+  img { max-width: 100%; display: block; }
+
+  /* one language at a time, like the game */
+  [lang="cs"]:not(html) { display: none; }
+  html[data-lang="cs"] [lang="en"]:not(html) { display: none; }
+  html[data-lang="cs"] [lang="cs"]:not(html) { display: revert; }
+
+  .wrap { width: min(1100px, 100% - 32px); margin-inline: auto; }
+
+  /* top bar */
+  .bar {
+    position: absolute; inset: 0 0 auto 0; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px;
+  }
+  .bar .logo { display: flex; gap: 8px; align-items: center; font-family: "Shantell Sans"; font-weight: 800; color: var(--bark); text-decoration: none; font-size: 1.1rem; }
+  .bar .logo img { width: 34px; }
+  .lang { display: flex; gap: 6px; }
+  .lang button {
+    font-weight: 700; font-size: .95rem; cursor: pointer;
+    padding: 6px 12px; border-radius: 10px;
+    border: 2.5px solid var(--line); background: var(--sand); color: var(--bark);
+    box-shadow: 0 3px 0 var(--line);
+  }
+  .lang button[aria-pressed="true"] { background: var(--sun); }
+
+  /* hero */
+  .hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(var(--sky) 0%, var(--sky) 55%, #d9ecd0 55%, #cfe3b8 70%, var(--sand) 70%);
+    padding: 96px 0 0;
+  }
+  .hero .cloud { position: absolute; width: 120px; height: 36px; background: #fff; border-radius: 40px; border: 2px solid #c9d7de; opacity: .9; animation: drift 60s linear infinite; }
+  .hero .cloud::before { content: ""; position: absolute; width: 56px; height: 44px; left: 22px; top: -24px; background: #fff; border-radius: 50%; border: 2px solid #c9d7de; border-bottom: none; }
+  .hero .c1 { top: 70px; left: 8%; }
+  .hero .c2 { top: 140px; left: 62%; transform: scale(.7); animation-duration: 90s; }
+  @keyframes drift { from { translate: -40px 0; } to { translate: 80px 0; } }
+  .hero .sun { position: absolute; top: 40px; right: 6%; width: 110px; animation: spin 40s linear infinite; }
+  @keyframes spin { to { rotate: 360deg; } }
+
+  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 24px; align-items: end; position: relative; }
+  .hero-text { padding-bottom: 70px; }
+  .hero h1 {
+    font-size: clamp(2.6rem, 7vw, 4.8rem); font-weight: 800; margin-bottom: .15em;
+    color: var(--bark);
+    text-shadow: 3px 3px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+  }
+  .hero .other { font-family: "Shantell Sans"; font-weight: 700; color: var(--bark-soft); font-size: 1.3rem; margin-bottom: 1em; }
+  .hero .pitch { font-size: 1.35rem; max-width: 34ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 1.4em; padding: 0; list-style: none; }
+  .chips li { background: var(--paper); border: 2px solid var(--line); border-radius: 999px; padding: 2px 12px; font-size: 1rem; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 800; font-size: 1.25rem; text-decoration: none; color: var(--ink);
+    padding: 12px 24px; border-radius: 16px;
+    border: 3px solid var(--line); background: var(--sun);
+    box-shadow: 0 5px 0 var(--line);
+    transition: translate .1s, box-shadow .1s;
+  }
+  .btn:hover { translate: 0 2px; box-shadow: 0 3px 0 var(--line); }
+  .btn.alt { background: var(--paper); }
+  .btn[aria-disabled="true"] { opacity: .6; pointer-events: none; }
+  .btn small { font-family: "Patrick Hand"; font-weight: 400; font-size: .95rem; }
+
+  .cast { position: relative; display: flex; align-items: flex-end; justify-content: center; min-height: 380px; }
+  .cast .fabian { width: min(250px, 60%); animation: wave 3.5s ease-in-out infinite; transform-origin: 50% 100%; }
+  .cast .joey { width: min(190px, 45%); margin-right: -30px; margin-bottom: 4px; }
+  @keyframes wave { 0%, 100% { rotate: 0deg; } 50% { rotate: 2deg; } }
+
+  /* leaves */
+  .leaf { position: absolute; top: -30px; width: 16px; height: 10px; border-radius: 0 100% 0 100%; opacity: .85; animation: fall linear infinite; pointer-events: none; }
+  @keyframes fall { to { translate: var(--dx, 60px) 110vh; rotate: 540deg; } }
+
+  /* sections */
+  section { padding: 80px 0; }
+  .lead { font-size: 1.3rem; max-width: 60ch; color: var(--muted); }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .shot {
+    border: 3px solid var(--line); border-radius: var(--radius);
+    box-shadow: 8px 8px 0 var(--sand); overflow: hidden; background: #fff;
+  }
+  .shot.tilt-l { rotate: -1.4deg; }
+  .shot.tilt-r { rotate: 1.2deg; }
+
+  /* the typing demo */
+  .demo { display: flex; justify-content: center; margin: 32px 0 8px; }
+  .sign {
+    background: var(--paper); border: 3px solid var(--line); border-radius: 16px;
+    padding: 12px 26px; font-family: "Shantell Sans"; font-weight: 800; font-size: clamp(1.6rem, 5vw, 2.6rem);
+    letter-spacing: .06em; box-shadow: 0 5px 0 var(--line); min-width: 8ch; text-align: center;
+  }
+  .sign .done { color: var(--moss); }
+  .sign .caret { display: inline-block; width: 3px; height: 1em; background: var(--rowan); vertical-align: -0.12em; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* finds */
+  .finds { background: var(--paper); border-block: 3px solid var(--line); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 32px; }
+  .card {
+    background: #fff; border: 3px solid var(--line); border-radius: var(--radius);
+    padding: 20px; box-shadow: 0 6px 0 var(--sand);
+  }
+  .card .icons { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .card .icons img { width: 64px; }
+  .card .icons .arrow { font-size: 1.6rem; color: var(--muted); }
+  .card p { margin: 0; color: var(--muted); }
+  .card.warn { background: #fff3ef; }
+  .tag { display: inline-block; font-family: "Shantell Sans"; font-weight: 800; font-size: .9rem; color: #fff; background: var(--rowan); border-radius: 8px; padding: 0 8px; margin-left: 4px; }
+
+  /* ranks */
+  .ranks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+  .rank { border: 3px solid var(--line); border-radius: var(--radius); padding: 22px; background: var(--paper); text-align: center; }
+  .rank .emoji { font-size: 3rem; line-height: 1; }
+  .rank b { display: block; font-size: 1.4rem; color: var(--bark); margin: 8px 0 4px; }
+  .rank .ex { font-family: "Shantell Sans"; font-weight: 800; background: #fff; border: 2px dashed var(--bark-soft); border-radius: 10px; display: inline-block; padding: 2px 10px; margin: 10px 0; letter-spacing: .04em; }
+  .rank p { color: var(--muted); margin: 0; font-size: 1.05rem; }
+
+  /* gallery */
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+  .gallery figure { margin: 0; }
+  .gallery figcaption { text-align: center; color: var(--muted); margin-top: 10px; font-size: 1.05rem; }
+  .gallery .shot { cursor: zoom-in; }
+
+  /* atlas strip */
+  .strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+  .strip img { width: 84px; background: #fff; border: 2.5px solid var(--line); border-radius: 14px; padding: 6px; transition: rotate .2s, scale .2s; }
+  .strip img:hover { rotate: -6deg; scale: 1.12; }
+
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; text-align: center; }
+  .fact b { display: block; font-family: "Shantell Sans"; font-weight: 800; font-size: 2.6rem; color: var(--moss); line-height: 1; }
+  .fact span { color: var(--muted); }
+
+  /* joey's games */
+  .games ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .games li { display: flex; gap: 12px; align-items: baseline; background: var(--paper); border: 2px solid var(--line); border-radius: 12px; padding: 8px 14px; }
+  .games li b { font-family: "Shantell Sans"; color: var(--bark); }
+  .games li span { color: var(--muted); margin-left: auto; text-align: right; }
+
+  /* keepsakes / finale */
+  .finale { background: linear-gradient(#e4efd9, var(--cream)); }
+  .keepsakes { display: flex; gap: 14px; margin-top: 18px; }
+  .keepsakes img { width: 72px; }
+
+  /* play */
+  .play { text-align: center; background: var(--sky); border-top: 3px solid var(--line); }
+  .play .ctas { justify-content: center; margin-top: 24px; }
+  pre { text-align: left; display: inline-block; background: var(--ink); color: #f6ecd6; border-radius: 12px; padding: 14px 20px; font-size: .95rem; overflow-x: auto; max-width: 100%; margin-top: 28px; }
+
+  footer { background: var(--bark); color: #f2e6cf; padding: 40px 0; font-size: 1.02rem; }
+  footer a { color: var(--sun); }
+  footer .cols { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; }
+  footer ul { margin: 0; padding-left: 1.1em; }
+
+  /* lightbox */
+  dialog { border: 3px solid var(--line); border-radius: var(--radius); padding: 0; max-width: min(1280px, 94vw); background: #fff; }
+  dialog::backdrop { background: rgba(47, 36, 24, .7); }
+  dialog img { width: 100%; }
+
+  @media (max-width: 820px) {
+    .hero-grid, .split, footer .cols { grid-template-columns: 1fr; }
+    .hero-text { padding-bottom: 0; }
+    .cast { min-height: 260px; }
+    .hero .sun { width: 70px; }
+    .ranks, .gallery { grid-template-columns: 1fr; }
+    .facts { grid-template-columns: repeat(2, 1fr); }
+    .split .shot { order: -1; }
+    section { padding: 56px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .leaf { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero" id="top">
+  <div class="bar">
+    <a class="logo" href="#top"><img src="img/cone_icon.png" alt=""> <span lang="en">Fabian's Trail</span><span lang="cs">Fabiánova stezka</span></a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set="cs" aria-pressed="false">CS</button>
+      <button type="button" data-set="en" aria-pressed="true">EN</button>
+    </div>
+  </div>
+  <div class="cloud c1"></div><div class="cloud c2"></div>
+  <img class="sun" src="img/sun.png" alt="">
+
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <h1><span lang="en">Fabian's Trail</span><span lang="cs">Fabiánova stezka</span></h1>
+      <div class="other"><span lang="en">Fabiánova stezka</span><span lang="cs">Fabian's Trail</span></div>
+      <p class="pitch">
+        <span lang="en">A cosy nature-walk typing game for young children, set in the Brdy hills of the Czech Republic.</span>
+        <span lang="cs">Klidná psací hra pro malé děti. Procházka podzimními Brdy se psem Joeym.</span>
+      </p>
+      <ul class="chips">
+        <li>🇨🇿 Čeština · 🇬🇧 English</li>
+        <li><span lang="en">ages 4–8</span><span lang="cs">4–8 let</span></li>
+        <li><span lang="en">no way to lose</span><span lang="cs">nedá se prohrát</span></li>
+        <li>Web · Linux · Windows</li>
+      </ul>
+      <div class="ctas">
+        <a class="btn" href="#play"><span lang="en">Play</span><span lang="cs">Hrát</span> ▸</a>
+        <a class="btn alt" href="https://github.com/redrick/fabians-trails"><span lang="en">Source on GitHub</span><span lang="cs">Zdroják na GitHubu</span></a>
+      </div>
+    </div>
+    <div class="cast">
+      <img class="joey" src="img/joey_stand.png" alt="Joey the border collie">
+      <img class="fabian" src="img/fabian_wave.png" alt="Fabián, the forest spirit of Brdy, waving">
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section id="about">
+  <div class="wrap split">
+    <div>
+      <h2><span lang="en">A walk in the real woods</span><span lang="cs">Procházka skutečným lesem</span></h2>
+      <p class="lead" lang="en">Walk autumn trails out of Hostomice with Joey the dog. Deer, mushrooms, berries and wildflowers
+        peek out from behind bushes and rocks. Type the name on the sign and it's yours: into the camera, the basket or the herbarium.</p>
+      <p class="lead" lang="cs">Vyraz z Hostomic po podzimních stezkách se psem Joeym. Zpoza keřů a kamenů vykukují srnky, houby,
+        bobule a kytky. Napiš jméno z cedulky a úlovek je tvůj: do foťáku, do košíku, nebo do herbáře.</p>
+      <p lang="en">Everything is real: the trails start on the town square, the places are real places in Brdy, and every
+        animal, mushroom and plant is one you can find there in autumn. The sun crossing the sky is the only clock.
+        Too slow? The animal simply hides again.</p>
+      <p lang="cs">Všechno je skutečné: stezky začínají na náměstí, místa jsou opravdová místa v Brdech a každé zvíře, houbu
+        i rostlinu tam na podzim najdeš. Jediné hodiny je slunce na obloze. Nestihneš to? Zvířátko se jen zase schová.</p>
+      <div class="demo" aria-hidden="true"><div class="sign" id="sign"></div></div>
+    </div>
+    <img class="shot tilt-r" src="screenshots/trail.jpg" alt="A pheasant and rowan berries peeking out on the trail" loading="lazy">
+  </div>
+</section>
+
+<section class="finds">
+  <div class="wrap">
+    <h2><span lang="en">Every find goes somewhere</span><span lang="cs">Každý úlovek má své místo</span></h2>
+    <p class="lead"><span lang="en">And the youngest learn the most important forest rule on the way.</span><span lang="cs">A ti nejmenší se cestou naučí nejdůležitější lesní pravidlo.</span></p>
+    <div class="cards">
+      <div class="card">
+        <div class="icons"><img src="img/jelen.png" alt=""><span class="arrow">→</span><img src="img/camera.png" alt=""></div>
+        <h3><span lang="en">Animals</span><span lang="cs">Zvířata</span></h3>
+        <p><span lang="en">Get photographed. Click!</span><span lang="cs">Vyfotíš je. Cvak!</span></p>
+      </div>
+      <div class="card warn">
+        <div class="icons"><img src="img/muchomurka.png" alt=""><span class="arrow">→</span><img src="img/camera.png" alt=""></div>
+        <h3><span lang="en">Poisonous mushrooms</span><span lang="cs">Jedovaté houby</span> <span class="tag">Nesahat!</span></h3>
+        <p><span lang="en">Photo only. Don't touch!</span><span lang="cs">Jen fotka. Nesahat!</span></p>
+      </div>
+      <div class="card">
+        <div class="icons"><img src="img/hrib.png" alt=""><span class="arrow">→</span><img src="img/basket.png" alt=""></div>
+        <h3><span lang="en">Mushrooms, berries, nuts</span><span lang="cs">Houby, bobule, oříšky</span></h3>
+        <p><span lang="en">Picked into the basket.</span><span lang="cs">Do košíku.</span></p>
+      </div>
+      <div class="card">
+        <div class="icons"><img src="img/borovice.png" alt=""><span class="arrow">→</span><img src="img/herbarium.png" alt=""></div>
+        <h3><span lang="en">Flowers, leaves, ferns</span><span lang="cs">Kytky, listy, kapradí</span></h3>
+        <p><span lang="en">Pressed into the herbarium.</span><span lang="cs">Vylisuješ do herbáře.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ranks">
+  <div class="wrap">
+    <h2><span lang="en">Three ranks, one family</span><span lang="cs">Tři hodnosti pro celou rodinu</span></h2>
+    <p class="lead"><span lang="en">Each player picks their own rank, from children who can't read yet to confident readers.</span><span lang="cs">Každý hráč si vybere svou hodnost, od dětí, které ještě nečtou, po zdatné čtenáře.</span></p>
+    <div class="ranks">
+      <div class="rank">
+        <div class="emoji">🦔</div>
+        <b><span lang="en">Hedgehog</span><span lang="cs">Ježek</span></b>
+        <div class="ex">H…</div>
+        <p><span lang="en">Types the first letter, with a glowing on-screen keyboard. Every name is spoken aloud.</span><span lang="cs">Píše první písmenko se svítící klávesnicí na obrazovce. Každé jméno se přečte nahlas.</span></p>
+      </div>
+      <div class="rank">
+        <div class="emoji">🐿️</div>
+        <b><span lang="en">Squirrel</span><span lang="cs">Veverka</span></b>
+        <div class="ex"><span lang="en">SQUIRREL</span><span lang="cs">HŘIB</span></div>
+        <p><span lang="en">Short names, for early readers.</span><span lang="cs">Krátká jména pro začínající čtenáře.</span></p>
+      </div>
+      <div class="rank">
+        <div class="emoji">🦉</div>
+        <b><span lang="en">Owl</span><span lang="cs">Sova</span></b>
+        <div class="ex"><span lang="en">EURASIAN JAY</span><span lang="cs">HŘIB SMRKOVÝ</span></div>
+        <p><span lang="en">Full names with exact accents, for confident readers.</span><span lang="cs">Celá jména i s háčky a čárkami pro zdatné čtenáře.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="finds">
+  <div class="wrap">
+    <h2><span lang="en">A nature atlas to fill</span><span lang="cs">Atlas přírody k vyplnění</span></h2>
+    <p class="lead"><span lang="en">Every species gets a card with a short factsheet for children, read aloud in Czech or English.</span><span lang="cs">Každý druh má kartičku s krátkým povídáním pro děti, přečteným česky nebo anglicky.</span></p>
+    <div class="strip">
+      <img src="img/veverka.png" alt="squirrel"><img src="img/hrib.png" alt="penny bun"><img src="img/jezek.png" alt="hedgehog">
+      <img src="img/liska.png" alt="fox"><img src="img/mlok.png" alt="fire salamander"><img src="img/jerabina.png" alt="rowan">
+      <img src="img/kulisek.png" alt="pygmy owl"><img src="img/muchomurka.png" alt="fly agaric"><img src="img/jelen.png" alt="red deer">
+    </div>
+    <div class="facts">
+      <div class="fact"><b>6</b><span lang="en">trails from Hostomice</span><span lang="cs">stezek z Hostomic</span></div>
+      <div class="fact"><b>66</b><span lang="en">species in the atlas</span><span lang="cs">druhů v atlasu</span></div>
+      <div class="fact"><b>6</b><span lang="en">mouse mini-games</span><span lang="cs">her na myš</span></div>
+      <div class="fact"><b>2</b><span lang="en">languages, fully voiced</span><span lang="cs">jazyky, vše namluvené</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="games">
+  <div class="wrap split">
+    <img class="shot tilt-l" src="screenshots/sort.jpg" alt="Sorting game: food into the basket, poisonous mushrooms to the camera" loading="lazy">
+    <div>
+      <h2><span lang="en">Joey's games</span><span lang="cs">Joeyho hry</span></h2>
+      <p class="lead"><span lang="en">Six mouse mini-games that teach mouse skills step by step. Each one unlocks the next.</span><span lang="cs">Šest miniher na myš, které krok za krokem učí zacházet s myší. Každá odemkne další.</span></p>
+      <ul>
+        <li><b><span lang="en">Joey on the trail</span><span lang="cs">Joey na stezce</span></b><span><span lang="en">moving the mouse</span><span lang="cs">pohyb myší</span></span></li>
+        <li><b><span lang="en">Falling leaves</span><span lang="cs">Padající listí</span></b><span><span lang="en">clicking</span><span lang="cs">klikání</span></span></li>
+        <li><b><span lang="en">What goes in the basket?</span><span lang="cs">Co patří do košíku?</span></b><span><span lang="en">drag and drop</span><span lang="cs">táhni a pusť</span></span></li>
+        <li><b><span lang="en">Fog on Plešivec</span><span lang="cs">Mlha na Plešivci</span></b><span><span lang="en">hold and move</span><span lang="cs">drž a táhni</span></span></li>
+        <li><b><span lang="en">In the orchard</span><span lang="cs">V sadu</span></b><span><span lang="en">double click</span><span lang="cs">dvojklik</span></span></li>
+        <li><b><span lang="en">Photo hunt</span><span lang="cs">Fotolov</span></b><span><span lang="en">moving targets</span><span lang="cs">pohyblivé cíle</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="finale">
+  <div class="wrap split">
+    <div>
+      <h2><span lang="en">Fabián waits at the end</span><span lang="cs">Na konci čeká Fabián</span></h2>
+      <p class="lead" lang="en">Every trail ends at a real landmark, where Fabián, the kind old forest spirit of Brdy, is waiting.
+        Type his name and he rewards you with cones and a keepsake: his lucky cone, a silver coin, a horseshoe…</p>
+      <p class="lead" lang="cs">Každá stezka končí u skutečného místa, kde čeká Fabián, laskavý starý lesní duch Brd. Napiš jeho jméno
+        a dostaneš šišky a upomínku: jeho šťastnou šišku, stříbrňák, podkovu…</p>
+      <p lang="en">Keep a clean streak and Joey's paw meter fills up. Then he runs off to sniff out something rare: a stag, a fire salamander, a pygmy owl.</p>
+      <p lang="cs">Když píšeš bez chyby, plní se Joeyho tlapky. Pak vyrazí vyčenichat něco vzácného: jelena, mloka, nebo kulíška.</p>
+      <div class="keepsakes">
+        <img src="img/keepsake_cone.png" alt="lucky cone"><img src="img/keepsake_coin.png" alt="silver coin"><img src="img/keepsake_horseshoe.png" alt="horseshoe"><img src="img/paw.png" alt="Joey's paw">
+      </div>
+    </div>
+    <img class="shot tilt-r" src="screenshots/fabian.jpg" alt="Fabián at his rock window waiting for his name to be typed" loading="lazy">
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="wrap">
+    <h2><span lang="en">Screenshots</span><span lang="cs">Obrázky ze hry</span></h2>
+    <div class="gallery">
+      <figure><img class="shot" src="screenshots/map.jpg" alt="Illustrated map of the Hostomice area with six trails" loading="lazy"><figcaption><span lang="en">Six trails around Hostomice</span><span lang="cs">Šest stezek kolem Hostomic</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/atlas.jpg" alt="Atlas card for the penny bun with a factsheet" loading="lazy"><figcaption><span lang="en">The atlas</span><span lang="cs">Atlas</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/games.jpg" alt="Joey's games menu" loading="lazy"><figcaption><span lang="en">Joey's games</span><span lang="cs">Joeyho hry</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/orchard.jpg" alt="In the orchard mini-game" loading="lazy"><figcaption><span lang="en">In the orchard</span><span lang="cs">V sadu</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/title.jpg" alt="Title screen: Fabián waving on the town square" loading="lazy"><figcaption><span lang="en">Hostomice town square</span><span lang="cs">Hostomické náměstí</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/sort.jpg" alt="Sorting game" loading="lazy"><figcaption><span lang="en">Basket or camera?</span><span lang="cs">Do košíku, nebo foťáku?</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="play" id="play">
+  <div class="wrap">
+    <h2><span lang="en">Play it</span><span lang="cs">Zahraj si</span></h2>
+    <p class="lead" style="margin-inline:auto"><span lang="en">Free, in the browser or as a download for Linux and Windows. No ads, no accounts, no tracking.</span><span lang="cs">Zdarma, v prohlížeči nebo ke stažení pro Linux a Windows. Bez reklam, bez účtů, bez sledování.</span></p>
+    <div class="ctas">
+      <a class="btn" aria-disabled="true"><span lang="en">itch.io</span><span lang="cs">itch.io</span> <small><span lang="en">(coming soon)</span><span lang="cs">(brzy)</span></small></a>
+      <a class="btn alt" href="https://github.com/redrick/fabians-trails"><span lang="en">Source code</span><span lang="cs">Zdrojový kód</span></a>
+    </div>
+    <pre># <span lang="en">or run it from source</span><span lang="cs">nebo spusť ze zdrojáku</span> (Godot 4.6.3)
+git clone https://github.com/redrick/fabians-trails
+godot --path fabians-trails/game</pre>
+  </div>
+</section>
+
+</main>
+
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <ul>
+        <li><span lang="en">Legend: Fabián, the forest spirit of Brdy, from local folklore as collected by Jan Čáka and others</span><span lang="cs">Pověst: Fabián, brdský lesní duch, z místního folklóru podle Jana Čáky a dalších</span></li>
+        <li><span lang="en">Music</span><span lang="cs">Hudba</span>: Kevin MacLeod (<a href="https://incompetech.com">incompetech.com</a>), <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></li>
+        <li><span lang="en">Voices</span><span lang="cs">Hlasy</span>: <a href="https://github.com/OHF-Voice/piper1-gpl">Piper</a> · <span lang="en">Fonts</span><span lang="cs">Písma</span>: Shantell Sans, Patrick Hand (OFL)</li>
+        <li><span lang="en">Built with</span><span lang="cs">Postaveno v</span> <a href="https://godotengine.org">Godot Engine</a></li>
+      </ul>
+    </div>
+    <div>
+      <p><span lang="en">Code: MIT. Art, texts and data: CC BY 4.0.</span><span lang="cs">Kód: MIT. Grafika, texty a data: CC BY 4.0.</span></p>
+      <p><a href="https://github.com/redrick/fabians-trails">github.com/redrick/fabians-trails</a></p>
+    </div>
+  </div>
+</footer>
+
+<dialog id="lightbox"><img alt=""></dialog>
+
+<script>
+  // language toggle: follows the browser on first visit, then remembers the choice
+  const root = document.documentElement;
+  function setLang(l) {
+    root.dataset.lang = l;
+    root.lang = l;
+    document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.set === l));
+    try { localStorage.setItem('lang', l); } catch (e) {}
+    startDemo();
+  }
+  let saved = null;
+  try { saved = localStorage.getItem('lang'); } catch (e) {}
+  document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.set)));
+
+  // the sign on the trail types itself
+  const WORDS = { en: ['SQUIRREL', 'FOX', 'ROWAN', 'HEDGEHOG', 'PENNY BUN'], cs: ['VEVERKA', 'LIŠKA', 'JEŘABINA', 'JEŽEK', 'HŘIB'] };
+  const sign = document.getElementById('sign');
+  let timer = null;
+  function startDemo() {
+    clearTimeout(timer);
+    const words = WORDS[root.dataset.lang];
+    let w = 0, i = 0;
+    (function tick() {
+      const word = words[w];
+      sign.innerHTML = '<span class="done">' + word.slice(0, i) + '</span>' + word.slice(i) + (i < word.length ? '' : ' ✓');
+      if (i < word.length) { i++; timer = setTimeout(tick, 260); }
+      else { w = (w + 1) % words.length; i = 0; timer = setTimeout(tick, 1400); }
+    })();
+  }
+  setLang(saved || ((navigator.language || '').startsWith('cs') ? 'cs' : 'en'));
+
+  // autumn leaves over the hero
+  const hero = document.querySelector('.hero');
+  const colours = ['#e2a918', '#d9542b', '#b5651d', '#8aa33a'];
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    for (let k = 0; k < 10; k++) {
+      const leaf = document.createElement('i');
+      leaf.className = 'leaf';
+      leaf.style.left = Math.random() * 100 + '%';
+      leaf.style.background = colours[k % colours.length];
+      leaf.style.animationDuration = 9 + Math.random() * 9 + 's';
+      leaf.style.animationDelay = -Math.random() * 18 + 's';
+      leaf.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
+      hero.appendChild(leaf);
+    }
+  }
+
+  // click a screenshot to see it big
+  const box = document.getElementById('lightbox');
+  document.querySelectorAll('img.shot').forEach(img => img.addEventListener('click', () => {
+    box.querySelector('img').src = img.src;
+    box.querySelector('img').alt = img.alt;
+    box.showModal();
+  }));
+  box.addEventListener('click', () => box.close());
+</script>
+</body>
+</html>
