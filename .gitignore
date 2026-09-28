@@ -1,0 +1,7 @@
+.godot/
+build/
+art/.venv/
+__pycache__/
+*.tmp
+game/assets/_tmp.pdf
+tools/.piper/

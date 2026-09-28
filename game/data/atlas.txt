@@ -1,0 +1,75 @@
+# id | cs | en | cs (Sova) | en (Sova) | category | flags
+# category: animal (photo), poison (photo only, don't touch), mushroom + fruit (basket), plant (herbarium)
+# flags: rare = only Joey finds it; sova = only for the Sova rank
+# no Ď Ť Ň Ó (dead keys), no hyphens or apostrophes
+
+zajic | ZAJÍC | HARE | ZAJÍC POLNÍ | BROWN HARE | animal
+kachna | KACHNA | DUCK | KACHNA DIVOKÁ | MALLARD | animal
+bazant | BAŽANT | PHEASANT | BAŽANT OBECNÝ | COMMON PHEASANT | animal
+koroptev | KOROPTEV | PARTRIDGE | KOROPTEV POLNÍ | GREY PARTRIDGE | animal
+volavka | VOLAVKA | HERON | VOLAVKA POPELAVÁ | GREY HERON | animal
+zaba | ŽÁBA | FROG | SKOKAN HNĚDÝ | COMMON FROG | animal
+ropucha | ROPUCHA | TOAD | ROPUCHA OBECNÁ | COMMON TOAD | animal
+pstruh | PSTRUH | TROUT | PSTRUH OBECNÝ | BROWN TROUT | animal
+vazka | VÁŽKA | DRAGONFLY | VÁŽKA OBECNÁ | VAGRANT DARTER | animal
+veverka | VEVERKA | SQUIRREL | VEVERKA OBECNÁ | RED SQUIRREL | animal
+sojka | SOJKA | JAY | SOJKA OBECNÁ | EURASIAN JAY | animal
+kos | KOS | BLACKBIRD | KOS ČERNÝ | COMMON BLACKBIRD | animal
+sykora | SÝKORA | TIT | SÝKORA VELKÁ | GREAT TIT | animal
+datel | DATEL | WOODPECKER | DATEL ČERNÝ | BLACK WOODPECKER | animal
+kane | KÁNĚ | BUZZARD | KÁNĚ LESNÍ | COMMON BUZZARD | animal
+srna | SRNA | ROE DEER | SRNEC OBECNÝ | ROE DEER | animal
+jelen | JELEN | STAG | JELEN LESNÍ | RED DEER | animal | rare
+liska | LIŠKA | FOX | LIŠKA OBECNÁ | RED FOX | animal
+jezevec | JEZEVEC | BADGER | JEZEVEC LESNÍ | EURASIAN BADGER | animal
+divocak | DIVOČÁK | BOAR | PRASE DIVOKÉ | WILD BOAR | animal
+jezek | JEŽEK | HEDGEHOG | JEŽEK OBECNÝ | COMMON HEDGEHOG | animal
+mravenec | MRAVENEC | ANT | MRAVENEC LESNÍ | WOOD ANT | animal
+jesterka | JEŠTĚRKA | LIZARD | JEŠTĚRKA OBECNÁ | SAND LIZARD | animal
+slepys | SLEPÝŠ | SLOW WORM | SLEPÝŠ KŘEHKÝ | SLOW WORM | animal
+mlok | MLOK | SALAMANDER | MLOK SKVRNITÝ | FIRE SALAMANDER | animal | rare
+kulisek | KULÍŠEK | PYGMY OWL | KULÍŠEK NEJMENŠÍ | EURASIAN PYGMY OWL | animal | rare
+netopyr | NETOPÝR | BAT | NETOPÝR REZAVÝ | COMMON NOCTULE | animal | rare
+
+muchomurka | MUCHOMŮRKA | FLY AGARIC | MUCHOMŮRKA ČERVENÁ | FLY AGARIC | poison
+horcak | HOŘČÁK | BITTER BOLETE | HŘIB ŽLUČNÍK | BITTER BOLETE | poison
+zelena | ZELENÁ MUCHOMŮRKA | DEATH CAP | MUCHOMŮRKA ZELENÁ | DEATH CAP | poison | sova
+
+hrib | HŘIB | PORCINI | HŘIB SMRKOVÝ | PENNY BUN | mushroom
+liska_houba | LIŠKA | CHANTERELLE | LIŠKA OBECNÁ | GOLDEN CHANTERELLE | mushroom
+kozak | KOZÁK | BIRCH BOLETE | KOZÁK BŘEZOVÝ | BROWN BIRCH BOLETE | mushroom
+vaclavka | VÁCLAVKA | HONEY FUNGUS | VÁCLAVKA OBECNÁ | HONEY FUNGUS | mushroom
+pychavka | PÝCHAVKA | PUFFBALL | PÝCHAVKA OBECNÁ | COMMON PUFFBALL | mushroom
+klouzek | KLOUZEK | SLIPPERY JACK | KLOUZEK OBECNÝ | SLIPPERY JACK | mushroom
+bedla | BEDLA | PARASOL | BEDLA VYSOKÁ | PARASOL MUSHROOM | mushroom
+ryzec | RYZEC | MILK CAP | RYZEC PRAVÝ | SAFFRON MILK CAP | mushroom | rare
+
+sipek | ŠÍPEK | ROSE HIP | RŮŽE ŠÍPKOVÁ | DOG ROSE | fruit
+jerabina | JEŘABINA | ROWAN | JEŘÁB PTAČÍ | ROWAN BERRIES | fruit
+trnka | TRNKA | SLOE | SLIVONĚ TRNKA | BLACKTHORN | fruit
+brusinka | BRUSINKA | LINGONBERRY | BRUSNICE BRUSINKA | LINGONBERRY | fruit
+boruvka | BORŮVKA | BLUEBERRY | BRUSNICE BORŮVKA | BILBERRY | fruit
+ostruzina | OSTRUŽINA | BLACKBERRY | OSTRUŽINÍK OBECNÝ | BRAMBLE | fruit
+zalud | ŽALUD | ACORN | ŽALUD DUBU | OAK ACORN | fruit
+bukvice | BUKVICE | BEECHNUT | BUKVICE BUKU | BEECH NUT | fruit
+orech | OŘECH | WALNUT | OŘECH VLAŠSKÝ | COMMON WALNUT | fruit
+jablko | JABLKO | APPLE | JABLKO PLANÉ | WILD APPLE | fruit
+kastan | KAŠTAN | CONKER | PLODY JÍROVCE | HORSE CHESTNUT | fruit
+siska | ŠIŠKA | CONE | ŠIŠKA SMRKU | SPRUCE CONE | fruit
+
+kapradi | KAPRADÍ | FERN | KAPRADÍ SAMEC | MALE FERN | plant
+mech | MECH | MOSS | PLONÍK OBECNÝ | HAIRCAP MOSS | plant
+buk | BUK | BEECH | BUK LESNÍ | EUROPEAN BEECH | plant
+smrk | SMRK | SPRUCE | SMRK ZTEPILÝ | NORWAY SPRUCE | plant
+jedle | JEDLE | FIR | JEDLE BĚLOKORÁ | SILVER FIR | plant
+dub | DUB | OAK | DUB LETNÍ | ENGLISH OAK | plant
+briza | BŘÍZA | BIRCH | BŘÍZA BRADAVIČNATÁ | SILVER BIRCH | plant
+javor | JAVOR | MAPLE | JAVOR KLEN | SYCAMORE MAPLE | plant
+modrin | MODŘÍN | LARCH | MODŘÍN OPADAVÝ | EUROPEAN LARCH | plant
+borovice | BOROVICE | PINE | BOROVICE LESNÍ | SCOTS PINE | plant
+vres | VŘES | HEATHER | VŘES OBECNÝ | COMMON HEATHER | plant
+materidouska | MATEŘÍDOUŠKA | THYME | MATEŘÍDOUŠKA VEJČITÁ | WILD THYME | plant
+kopriva | KOPŘIVA | NETTLE | KOPŘIVA DVOUDOMÁ | STINGING NETTLE | plant
+vratic | VRATIČ | TANSY | VRATIČ OBECNÝ | COMMON TANSY | plant
+cekanka | ČEKANKA | CHICORY | ČEKANKA OBECNÁ | COMMON CHICORY | plant
+zemezluc | ZEMĚŽLUČ | CENTAURY | ZEMĚŽLUČ OKOLIČNATÁ | COMMON CENTAURY | plant | rare

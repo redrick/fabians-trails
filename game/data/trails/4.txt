@@ -1,0 +1,14 @@
+# Plešivec & Smaragdové jezírko: west via Běštín and Radouš to the stone sea of Plešivec
+name | Plešivec | Plešivec
+station | bestin | Památný dub u Běštína | The old oak at Běštín | dub zalud sojka jezek kos koroptev
+station | radous | Radouš | Radouš | kane jablko sipek trnka cekanka vratic
+station | jezirko | Smaragdové jezírko | Emerald pond | vazka zaba ropucha volavka kopriva kachna
+station | plesivec | Kamenné moře | Sea of stones | jesterka slepys vres materidouska borovice boruvka klouzek muchomurka
+rare | netopyr ryzec zemezluc
+finale | zahradka | Fabiánova zahrádka | Fabián's garden
+target | POKLAD | TREASURE
+target_sova | STŘÍBRNÉ MINCE | SILVER COINS
+fabian | Vítej v mé zahrádce na Plešivci! | Welcome to my garden on Plešivec!
+fabian | Lidé tady našli opravdový poklad: stříbrné mince. | People found real treasure here: silver coins.
+thanks | Jednu minci jsem schoval pro tebe. | I saved one coin for you.
+keepsake | coin | Stříbrná mince | Silver coin

@@ -1,0 +1,5 @@
+Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+track_1.ogg  "Porch Swing Days - slower"
+track_2.ogg  "Lasting Hope"
+track_3.ogg  "Dreamer"

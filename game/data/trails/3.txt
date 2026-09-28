@@ -1,0 +1,13 @@
+# Kuchyňka & Provazec: red Hřebeny trail south to the mysterious stone wall
+name | Kuchyňka a Provazec | Kuchyňka and Provazec
+station | kuchynka | Kuchyňka | Kuchyňka hill | veverka sykora hrib vaclavka buk kapradi
+station | sut | Kamenné moře | Sea of stones | jesterka slepys mech jedle ropucha horcak
+station | provazec | Provazec | Provazec hill | jezevec mravenec smrk siska brusinka pychavka
+rare | mlok ryzec kulisek
+finale | zed | Tajemná zeď | The mysterious wall
+target | HÁDANKA | RIDDLE
+target_sova | KAMENY MAJÍ TAJEMSTVÍ | THE STONES HAVE A SECRET
+fabian | Kdo postavil tuhle dlouhou kamennou zeď? | Who built this long stone wall?
+fabian | To nikdo neví. Je to hádanka i pro mě! | Nobody knows. It's a riddle, even for me!
+thanks | Vezmi si kamínek ze zdi. Třeba to jednou vyřešíš. | Take a stone from the wall. Maybe one day you'll solve it.
+keepsake | stone | Kamínek ze zdi | Stone from the wall

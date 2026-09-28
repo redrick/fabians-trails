@@ -1,0 +1,14 @@
+# Cesta za Fabiánem: the blue trail from the square to Fabiánovo lože on Velká Baba
+name | Cesta za Fabiánem | To Fabián
+station | zator | Pole u Zátoru | Zátor fields | zajic kachna bazant sipek jerabina kane
+station | chumava | Vodopád Chumava | Chumava waterfall | zaba pstruh mech kapradi vazka volavka
+station | brdlavka | Studánka Brdlavka | Brdlavka spring | veverka sojka hrib liska_houba muchomurka brusinka siska smrk
+station | baba | Pod Velkou Babou | Below Velká Baba | srna datel buk bukvice vaclavka kos zelena
+rare | jelen mlok zemezluc
+finale | loze | Fabiánovo lože | Fabián's Bed
+target | FABIÁN | FABIAN
+target_sova | FABIÁN HLÍDÁ LES | FABIAN GUARDS THE FOREST
+fabian | Ahoj! Já jsem Fabián, strážce Brd. | Hello! I'm Fabián, keeper of the Brdy woods.
+fabian | Tahle skála je všechno, co zbylo z mého hradu. | This rock is all that's left of my castle.
+thanks | Našel jsi mě! Tady je moje šiška pro štěstí. | You found me! Here is my lucky cone.
+keepsake | cone | Fabiánova šiška | Fabián's cone

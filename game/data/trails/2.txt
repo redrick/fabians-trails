@@ -1,0 +1,14 @@
+# Studený vrch: green trail through Lštěň and Malý Chlumec up to the Hřebeny ridge
+name | Studený vrch | Cold Hill
+station | lsten | Louky u Lštěně | Lštěň meadows | koroptev zajic cekanka vratic trnka kane
+station | chlumec | Malý Chlumec | Little Chlumec | sojka kos jerabina javor ostruzina jezek
+station | palouky | Jelení palouky | Deer clearings | srna liska pychavka bedla muchomurka buk
+station | hrebeny | Na Hřebenech | On the ridge | datel sykora bukvice klouzek jedle mech zelena
+rare | jelen kulisek ryzec
+finale | vrch | Rozhledna Studený vrch | Cold Hill lookout
+target | ROZHLEDNA | TOWER
+target_sova | VIDÍM CELÉ BRDY | I CAN SEE ALL OF BRDY
+fabian | Vylez nahoru! Z rozhledny uvidíš celé Brdy. | Climb up! From the tower you can see all of Brdy.
+fabian | Támhle za kopci čekají další stezky. | More trails are waiting beyond those hills.
+thanks | Tady máš pohled z rozhledny na památku. | Here is a lookout postcard to remember.
+keepsake | postcard | Pohled z rozhledny | Lookout postcard

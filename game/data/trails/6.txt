@@ -1,0 +1,13 @@
+# Hradec: east through old oaks and beeches to the Celtic hillfort
+name | Hradec | Hradec
+station | doubrava | Doubrava | Oak wood | dub zalud sojka divocak mravenec bedla
+station | buciny | Staré bučiny | Old beeches | buk bukvice datel sykora hrib muchomurka
+station | valy | Keltské valy | Celtic ramparts | jezevec liska modrin javor kozak briza
+rare | kulisek jelen ryzec
+finale | hradec | Keltské hradiště | Celtic hillfort
+target | KELTOVÉ | CELTS
+target_sova | KELTOVÉ TU STAVĚLI VALY | THE CELTS BUILT WALLS HERE
+fabian | Před dávnými časy tu žili Keltové. | Long, long ago the Celts lived here.
+fabian | Postavili si hradiště s valy z kamení a hlíny. | They built a hillfort with walls of stone and earth.
+thanks | Našel jsem keltský korálek. Je tvůj! | I found a Celtic bead. It's yours!
+keepsake | bead | Keltský korálek | Celtic bead

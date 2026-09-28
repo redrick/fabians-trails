@@ -1,0 +1,13 @@
+# Neumětely: north along the Chumava to Šemík's grave
+name | Za Šemíkem | To Šemík
+station | pole | Pole u Chumavy | Chumava fields | zajic bazant koroptev kane cekanka vratic
+station | sady | Staré sady | Old orchards | jablko orech ostruzina jezek kos sykora
+station | ves | Neumětely | Neumětely village | kachna volavka kastan kopriva briza trnka
+rare | netopyr kulisek jelen
+finale | semik | Šemíkův hrob | Šemík's grave
+target | ŠEMÍK | HORSE
+target_sova | ŠEMÍK SKOČIL DO VLTAVY | THE BRAVE HORSE LEAPT
+fabian | Tady odpočívá kůň Šemík. | Here rests Šemík the horse.
+fabian | Skočil s rytířem Horymírem z Vyšehradu až do Vltavy! | He leapt with the knight Horymír from Vyšehrad into the river!
+thanks | Šemík by ti dal podkovu pro štěstí. | Šemík would give you a lucky horseshoe.
+keepsake | horseshoe | Šemíkova podkova | Šemík's horseshoe
