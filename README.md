@@ -10,6 +10,8 @@ old forest spirit of Brdy.
 
 Czech 🇨🇿 and English 🇬🇧 · made with [Godot 4](https://godotengine.org) · plays in the browser, on Linux and on Windows
 
+**[🌲 Game website → antas.cz/fabians-trails](https://antas.cz/fabians-trails/)**
+
 <img src="docs/screenshots/title.jpg" width="820" alt="Title screen: Fabián waving on the town square">
 
 </div>
