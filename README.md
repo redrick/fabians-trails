@@ -10,7 +10,7 @@ old forest spirit of Brdy.
 
 Czech 🇨🇿 and English 🇬🇧 · made with [Godot 4](https://godotengine.org) · plays in the browser, on Linux and on Windows
 
-**[🌲 Game website → antas.cz/fabians-trails](https://antas.cz/fabians-trails/)**
+**[▶ Play on itch.io](https://redricko.itch.io/fabians-trail)** · **[🌲 Game website](https://antas.cz/fabians-trails/)**
 
 <img src="docs/screenshots/title.jpg" width="820" alt="Title screen: Fabián waving on the town square">
 
@@ -98,7 +98,7 @@ only clock, and every trail ends with Fabián.
 
 ## Play
 
-Download it from **itch.io** (link coming soon), or run it from source:
+Play it in the browser or download it for Linux and Windows on **[itch.io](https://redricko.itch.io/fabians-trail)**, or run it from source:
 
 ```sh
 # Godot 4.6.3 (standard build, not .NET)
