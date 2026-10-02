@@ -5,3 +5,4 @@ __pycache__/
 *.tmp
 game/assets/_tmp.pdf
 tools/.piper/
+tools/.edge/
