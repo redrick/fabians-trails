@@ -39,6 +39,7 @@ func _ready() -> void:
 		"jingle": _notes([1047.0, 1319.0, 1568.0, 2093.0], 0.09, 0.3),
 		"fanfare": _notes([523.0, 659.0, 784.0, 1047.0, 784.0, 1047.0], 0.14, 0.35),
 		"whoosh": _noise(0.5, 0.18),
+		"tick": _tone(0.05, func(_t): return 1400.0, 0.25, "sine", 0.0),
 	}
 	_forest.stream = _forest_loop()
 

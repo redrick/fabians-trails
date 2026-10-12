@@ -98,13 +98,15 @@ class Players extends Node2D:
 
 class Map extends Node2D:
 	signal goto(screen: String, arg: String)
+	# Race the sun: every trail, walked or not, starts against the clock and shows its best medal.
+	static var race_mode := false
 
 	func _ready() -> void:
 		add_child(UI.backdrop("res://assets/rooms/map.png"))
 		var p := Save.player()
 		var head := UI.bilabel("%s · %s" % [Text.player_name(Save.current), Text.rank(p.profile)], Text.rank(p.profile, Text.other_lang()), 52, UI.INK, 16)
 		UI.centered(self, head, Vector2(960, 70))
-		Sound.say("ui_map")
+		Sound.say("ui_race" if race_mode else "ui_map")
 		var home := UI.sprite("res://assets/ui/house.png", Config.MAP_HOME, 0.9)
 		add_child(home)
 		UI.centered(self, UI.bilabel("Hostomice", "", 34, UI.INK, 10), Config.MAP_HOME + Vector2(0, 80))
@@ -122,21 +124,40 @@ class Map extends Node2D:
 		games.pressed.connect(func(): goto.emit("games", ""))
 		games.position = Vector2(40, 130)
 		add_child(games)
+		var keys := UI.button(Text.t("keys"), 44, UI.GREEN)
+		keys.pressed.connect(func(): goto.emit("keys", ""))
+		keys.position = Vector2(40, 230)
+		add_child(keys)
+		var race := UI.button(Text.t("race"), 36, UI.YELLOW if race_mode else UI.GREEN)
+		race.pressed.connect(func():
+			race_mode = not race_mode
+			goto.emit("map", ""))
+		add_child(race)
+		race.reset_size()
+		race.position = Vector2(1655 - race.size.x, 36)
+		if race_mode:
+			UI.centered(self, UI.label(Text.t("race_hint"), 34, UI.RED, 10), Vector2(960, 132))
 		Screens.back_button(self, "players")
 		UI.lang_switch(self, func(): goto.emit("map", ""), Vector2(1790, 110))
 
 	func _trail_marker(n: int) -> void:
 		var at: Vector2 = Config.MAP[n]
 		var t := Atlas.trail(n)
-		var open := Save.is_unlocked(n)
-		var b := UI.button2(t.name[Save.lang()], t.name[Text.other_lang()], 34, UI.YELLOW if open else UI.GREY)
+		var open := race_mode or Save.is_unlocked(n)
+		var colour := (Color("f29a4a") if race_mode else UI.YELLOW) if open else UI.GREY
+		var b := UI.button2(t.name[Save.lang()], t.name[Text.other_lang()], 34, colour)
 		b.disabled = not open
-		b.pressed.connect(func(): goto.emit("trail", str(n)))
+		b.pressed.connect(func(): goto.emit("race" if race_mode else "trail", str(n)))
 		UI.centered(self, b, at + Vector2(0, 110))
 		b.position.x = clampf(b.position.x, 10, 1910 - b.size.x)
 		b.position.y = minf(b.position.y, 1070 - b.size.y)
 		if not open:
 			add_child(UI.sprite("res://assets/ui/lock.png", at + Vector2(0, 20), 0.6))
+		elif race_mode:
+			var medal := UI.Medal.new(Save.race_medal(n), 80)
+			UI.centered(self, medal, at + Vector2(0, 10))
+			if Save.race_best(n) > 0.0:
+				UI.centered(self, UI.label(Config.clock(Save.race_best(n)), 30, UI.INK, 10), at + Vector2(0, 60))
 		elif Save.is_done(n):
 			var row := HBoxContainer.new()
 			row.add_theme_constant_override("separation", 0)
@@ -156,7 +177,8 @@ class Map extends Node2D:
 	func _unhandled_input(event: InputEvent) -> void:
 		if event is InputEventKey and event.pressed and event.keycode in [KEY_ENTER, KEY_KP_ENTER]:
 			get_viewport().set_input_as_handled()
-			goto.emit("trail", str(Save.latest_trail()))
+			if not race_mode:
+				goto.emit("trail", str(Save.latest_trail()))
 
 
 class Book extends Node2D:
@@ -337,22 +359,33 @@ class Book extends Node2D:
 
 class GamesMenu extends Node2D:
 	signal goto(screen: String, arg: String)
+	var keys := false
+	var order: Array = Games.ORDER
+	var icons: Dictionary = Games.ICON
+
+	func _init(magic_keys := false) -> void:
+		keys = magic_keys
+		if keys:
+			order = KeyGames.ORDER
+			icons = KeyGames.ICON
 
 	func _ready() -> void:
-		add_child(UI.backdrop("res://assets/bg/palouky.png"))
-		UI.centered(self, UI.label(Text.t("games"), 72, UI.INK, 18), Vector2(960, 80))
-		for i in Games.ORDER.size():
-			_card(i, Vector2(420 + (i % 3) * 540, 360 + (i / 3) * 430))
+		add_child(UI.backdrop("res://assets/bg/%s.png" % ("zed" if keys else "palouky")))
+		UI.centered(self, UI.label(Text.t("keys" if keys else "games"), 72, UI.INK, 18), Vector2(960, 80))
+		for i in order.size():
+			var row := i / 3
+			var in_row := mini(3, order.size() - row * 3)
+			_card(i, Vector2(960 + ((i % 3) - (in_row - 1) / 2.0) * 540, 360 + row * 430))
 		Screens.back_button(self, "map")
-		UI.lang_switch(self, func(): goto.emit("games", ""), Vector2(1790, 1050))
+		UI.lang_switch(self, func(): goto.emit("keys" if keys else "games", ""), Vector2(1790, 1050))
 
 	func _card(i: int, at: Vector2) -> void:
-		var id: String = Games.ORDER[i]
-		var open := Save.game_unlocked(i)
+		var id: String = order[i]
+		var open := keys or Save.game_unlocked(i)
 		var p := UI.panel()
 		p.custom_minimum_size = Vector2(460, 380)
 		UI.centered(self, p, at)
-		var pic := UI.sprite("res://assets/%s.png" % Games.ICON[id], at + Vector2(0, -60), 0.9)
+		var pic := UI.sprite("res://assets/%s.png" % icons[id], at + Vector2(0, -60), 0.9)
 		var tex_h := pic.texture.get_height() * 0.9
 		if tex_h > 200:
 			pic.scale *= 200.0 / tex_h

@@ -52,10 +52,18 @@ var _after_lines := Callable()
 var _ranger_timer := 0.0
 var _joey_busy := false
 var _lit_paws := 0
+var paw_box := Node2D.new()
+# Race the sun: finds wait instead of hiding and a countdown runs while you type.
+var race := false
+var race_limit := 0.0
+var race_left := 0.0
+var race_clock: Label
+var _last_tick := -1
 
 
-func _init(trail_no := 1) -> void:
+func _init(trail_no := 1, is_race := false) -> void:
 	n = trail_no
+	race = is_race
 
 
 func _ready() -> void:
@@ -90,6 +98,8 @@ func _ready() -> void:
 	wave = Wave.new(profile)
 	_start_station(0, true)
 	Sound.start_ambience()
+	if race:
+		_start_race()
 
 
 func _ranger_tex(mood: String) -> Texture2D:
@@ -123,17 +133,19 @@ func _build_hud() -> void:
 	map_b.pressed.connect(func(): goto.emit("map", ""))
 	map_b.position = Vector2(1180, 24)
 	hud.add_child(map_b)
+	hud.add_child(paw_box)
+	paw_box.visible = not race
 	var tray := Panel.new()
 	tray.add_theme_stylebox_override("panel", UI.box(Color(UI.PAPER, 0.85), 18, 4))
 	tray.position = Vector2(30, 138)
 	tray.size = Vector2(Config.PAWS_FOR_RARE * 64 + 70, 76)
-	hud.add_child(tray)
+	paw_box.add_child(tray)
 	var head := UI.sprite("res://assets/chars/joey_stand.png", Vector2(62, 176), 0.22)
-	hud.add_child(head)
+	paw_box.add_child(head)
 	for i in Config.PAWS_FOR_RARE:
 		var p := UI.sprite("res://assets/ui/paw.png", Vector2(128 + i * 64, 176), 0.5)
 		p.modulate = Color(1, 1, 1, 0.22)
-		hud.add_child(p)
+		paw_box.add_child(p)
 		paws.append(p)
 
 
@@ -178,7 +190,7 @@ func _start_station(i: int, first := false) -> void:
 		move_child(stage, 0)
 		critters = stage.get_child(1)
 	_show_station_name("%s" % st[Save.lang()], st[Text.other_lang()])
-	cooldown = 1.5
+	cooldown = Config.RACE_SPAWN_GAP if race else 1.5
 	phase = "station"
 
 
@@ -194,6 +206,8 @@ func active() -> Array:
 
 func _process(delta: float) -> void:
 	_update_sun(delta)
+	if race:
+		_race_tick(delta)
 	if _ranger_timer > 0.0:
 		_ranger_timer -= delta
 		if _ranger_timer <= 0.0 and phase != "walk":
@@ -218,9 +232,11 @@ func _process(delta: float) -> void:
 func _update_sun(delta: float) -> void:
 	var stations: int = data.stations.size()
 	var target := 1.0
-	if phase in ["station", "walk"]:
+	if race:
+		target = 1.0 - race_left / race_limit
+	elif phase in ["station", "walk"]:
 		target = (station + wave.progress()) / float(stations + 1)
-	sun_p = move_toward(sun_p, target, delta * 0.08)
+	sun_p = move_toward(sun_p, target, delta * (0.5 if race else 0.08))
 	sun.position = Vector2(lerpf(280.0, 1640.0, sun_p), 330.0 - sin(PI * lerpf(0.08, 0.92, sun_p)) * 230.0)
 	var tint := Color(1, 1, 1).lerp(Color(1.0, 0.82, 0.68), smoothstep(0.6, 1.0, sun_p))
 	for c in get_children():
@@ -259,6 +275,8 @@ func spawn(rare_id := "", forced_spot := -1) -> Critter:
 	var word := Atlas.word_for(id, profile_id)
 	var spot_i: int = free.pick_random()
 	var time: float = profile.peek_time * (1.0 + 0.05 * maxi(0, word.length() - 6)) * (1.4 if rare else 1.0)
+	if race:
+		time = INF
 	var c := Critter.new()
 	c.setup(id, word, time, spot_i, rare)
 	c.position = spots[spot_i]
@@ -271,7 +289,7 @@ func spawn(rare_id := "", forced_spot := -1) -> Critter:
 	busy[spot_i] = c
 	wave.on_spawn(rare)
 	appeared += 1
-	cooldown = 1.7
+	cooldown = Config.RACE_SPAWN_GAP if race else 1.7
 	Sound.play("sniff")
 	if rare:
 		_sparkle(c.position + Vector2(0, -260))
@@ -314,7 +332,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_char(ch: String) -> void:
-	if ch.is_empty() or phase in ["over", "walk"] or _dialog:
+	if ch.is_empty() or phase in ["over", "walk", "ready"] or _dialog:
 		return
 	match typing.handle(ch):
 		Typing.Result.MISS:
@@ -339,7 +357,8 @@ func _on_completed(c: Critter) -> void:
 	busy.erase(c.spot)
 	wave.on_resolved(true)
 	caught += 1
-	Save.set_speed(wave.speed_after(Save.speed(), true, clean))
+	if not race:
+		Save.set_speed(wave.speed_after(Save.speed(), true, clean))
 	_set_ranger("cheer")
 	var e := Atlas.entry(c.id)
 	var fresh := Save.add_found(c.id)
@@ -357,7 +376,7 @@ func _on_completed(c: Critter) -> void:
 			_fly_basket(c)
 	if c.rare:
 		_joey_home()
-	elif wave.paws_after(true, clean) and not _joey_busy and not wave.rare_due and Atlas.pick_rare(n, _rare_seen) != "":
+	elif not race and wave.paws_after(true, clean) and not _joey_busy and not wave.rare_due and Atlas.pick_rare(n, _rare_seen) != "":
 		wave.add_rare()
 	_update_paws()
 
@@ -607,6 +626,9 @@ func _start_finale() -> void:
 	var tw := fabian.create_tween()
 	tw.tween_property(fabian, "modulate:a", 1.0, 0.8)
 	_sparkle(fabian_at + Vector2(0, -300))
+	if race:
+		_show_finale_target()
+		return
 	var lines := []
 	for i in data.fabian.size():
 		lines.append({"pair": data.fabian[i], "voice": "fabian_%d_%d" % [n, i]})
@@ -690,6 +712,9 @@ func _on_finale_done(_f) -> void:
 	_float_text(names[0], "", finale.position + Vector2(0, -40), UI.DONE, 60, 2.6)
 	finale.queue_free()
 	finale = null
+	if race:
+		get_tree().create_timer(1.2).timeout.connect(_race_over.bind(true))
+		return
 	_say_lines([{"pair": data.thanks, "voice": "thanks_%d" % n}], _give_keepsake)
 
 
@@ -779,5 +804,99 @@ func _summary() -> void:
 	h.add_child(map_b)
 	h.add_child(atlas_b)
 	h.add_child(again)
+	v.add_child(h)
+	UI.centered(o, p)
+
+
+func _start_race() -> void:
+	race_limit = Atlas.race_limit(n, profile_id)
+	race_left = race_limit
+	phase = "ready"
+	var p := UI.panel()
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	race_clock = UI.label(Config.clock(race_left), 64, UI.INK)
+	race_clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	race_clock.custom_minimum_size = Vector2(170, 0)
+	p.add_child(race_clock)
+	p.get_theme_stylebox("panel").content_margin_top = 4
+	p.get_theme_stylebox("panel").content_margin_bottom = 4
+	p.get_theme_stylebox("panel").content_margin_left = 24
+	p.get_theme_stylebox("panel").content_margin_right = 24
+	UI.centered(hud, p, Vector2(960, 64))
+	var count := ["3", "2", "1", Text.t("race_go")]
+	var tw := create_tween()
+	for i in count.size():
+		tw.tween_callback(func():
+			var big := UI.label(count[i], 220, UI.YELLOW if i < 3 else UI.DONE, 28)
+			big.z_index = 300
+			UI.centered(fx, big, Vector2(960, 470))
+			big.pivot_offset = big.size / 2
+			Sound.play("tick" if i < 3 else "chime")
+			var fade := big.create_tween()
+			fade.tween_property(big, "scale", Vector2(1.4, 1.4), 0.8)
+			fade.parallel().tween_property(big, "modulate:a", 0.0, 0.8)
+			fade.tween_callback(big.queue_free))
+		if i < 3:
+			tw.tween_interval(0.8)
+	tw.tween_callback(func(): phase = "station")
+
+
+# The clock runs while there is something to type: stations and Fabián's sign, not the walks between.
+func _race_tick(delta: float) -> void:
+	if not (phase == "station" or phase == "finale" and finale):
+		return
+	race_left = maxf(0.0, race_left - delta)
+	race_clock.text = Config.clock(race_left)
+	var secs := ceili(race_left)
+	if race_left <= 10.0:
+		race_clock.add_theme_color_override("font_color", UI.RED)
+		if secs != _last_tick:
+			_last_tick = secs
+			Sound.play("tick")
+			UI.pulse(race_clock.get_parent(), 1.15)
+	if race_left <= 0.0:
+		_race_over(false)
+
+
+func _race_over(won: bool) -> void:
+	var used := race_limit - race_left
+	var medal := Config.medal_for(used, race_limit) if won else 0
+	var old_best := Save.race_best(n)
+	var record := Save.finish_race(n, medal, used)
+	Sound.say("ui_race_won" if won else "ui_time_up")
+	if won:
+		Sound.play("fanfare")
+	_enter_action = func(): goto.emit("race", str(n))
+	var o := _overlay()
+	var p := UI.panel()
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 14)
+	p.add_child(v)
+	v.add_child(UI.tlabel("race_won" if won else "time_up", 72))
+	if won:
+		var row := HBoxContainer.new()
+		row.alignment = BoxContainer.ALIGNMENT_CENTER
+		row.add_child(UI.Medal.new(medal, 170))
+		v.add_child(row)
+		v.add_child(UI.bilabel(Text.t("medal_%d" % medal), Text.o("medal_%d" % medal), 48, UI.DONE))
+		var time_pair := [Text.t("race_time") % Config.clock(used), Text.o("race_time") % Config.clock(used)]
+		v.add_child(UI.bilabel(time_pair[0], time_pair[1], 44))
+	else:
+		var planned: int = profile.per_station * data.stations.size()
+		v.add_child(UI.bilabel(Text.t("found") % [caught, planned], Text.o("found") % [caught, planned], 44))
+	if record:
+		v.add_child(UI.tlabel("new_record", 48, Color("e08a1e")))
+	elif old_best > 0.0:
+		var best := Config.clock(old_best)
+		v.add_child(UI.bilabel(Text.t("race_best") % best, Text.o("race_best") % best, 38, UI.SOFT))
+	var h := HBoxContainer.new()
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 30)
+	var again := UI.tbutton("again", 52)
+	again.pressed.connect(func(): goto.emit("race", str(n)))
+	var map_b := UI.tbutton("map", 44, UI.GREEN)
+	map_b.pressed.connect(func(): goto.emit("map", ""))
+	h.add_child(again)
+	h.add_child(map_b)
 	v.add_child(h)
 	UI.centered(o, p)

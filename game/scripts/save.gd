@@ -27,7 +27,7 @@ func defaults() -> Dictionary:
 func new_player(name: String, profile: String, look: String) -> Dictionary:
 	return {
 		"name": name, "profile": profile, "look": look, "unlocked": 1, "done": [], "found": {}, "cones": {},
-		"keepsakes": [], "speed": 1.0, "games": {},
+		"keepsakes": [], "speed": 1.0, "games": {}, "race": {},
 	}
 
 
@@ -159,6 +159,30 @@ func set_game(id: String, cones: int) -> void:
 		p.games = {}
 	p.games[id] = maxi(int(p.games.get(id, 0)), cones)
 	write()
+
+
+# Race the sun keeps the best medal and the best finishing time per trail. Returns true for a new record.
+func finish_race(n: int, medal: int, used: float) -> bool:
+	var p := player()
+	if not p.has("race"):
+		p.race = {}
+	var key := str(n)
+	var r: Dictionary = p.race.get(key, {"medal": 0, "best": 0.0})
+	var record := medal > 0 and (float(r.best) <= 0.0 or used < float(r.best))
+	if record:
+		r.best = snappedf(used, 0.1)
+	r.medal = maxi(int(r.medal), medal)
+	p.race[key] = r
+	write()
+	return record
+
+
+func race_medal(n: int) -> int:
+	return int(player().get("race", {}).get(str(n), {}).get("medal", 0))
+
+
+func race_best(n: int) -> float:
+	return float(player().get("race", {}).get(str(n), {}).get("best", 0.0))
 
 
 func game_unlocked(i: int) -> bool:

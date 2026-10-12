@@ -21,10 +21,21 @@ itch.io (HTML5). Every text is shown in both languages; the chosen language is t
     `Screens.Title/Players/Map/Book` (`screens.gd`; Book is the atlas) and `Trail` (`trail.gd`, the gameplay).
   - `trail.gd` runs one trail: stations (a stage = backdrop + covers + critters, slides away on the walk to the
     next one), the sun, Joey's paw meter and rare finds, the flights to camera/basket/herbarium, Fabián's finale
-    and the summary. `critter.gd` is one find peeking from behind a cover (clip rect + slide), plus
-    `Critter.Finale`, the plaque Fabián holds up. `wave.gd` paces one station.
+    and the summary. `Trail.new(n, true)` is **Race the sun / Závod se sluncem** (map toggle, every trail open even if locked):
+    finds wait instead of hiding, no rare finds, no Fabián talk, a 3-2-1 countdown, then a clock that runs while
+    there is something to type (paused on walks). The limit comes from `Atlas.race_limit` (`Config.RACE` rates ×
+    average word length); finishing within 70/85/100 % of it gives gold/silver/bronze (`UI.Medal`), best medal
+    and time per trail in `Save.finish_race`. Sunset stops the trail.
+  - `critter.gd` is one find peeking from behind a cover (clip rect + slide), plus `Critter.Finale`, the plaque
+    Fabián holds up. `wave.gd` paces one station.
   - Joey's games (mouse mini-games): `minigame.gd` is the base (intro voice, ghost-hand demo, counter, result), and
     `games.gd` holds the six games plus `Games.make(id)`; `Screens.GamesMenu` lists them, and each unlocks the next.
+  - Magic keys / Kouzelné klávesy (keyboard-shortcut games for felbiTECH): `keys.gd` holds `KeyGame` (a MiniGame
+    with keycaps that light up while held, a clipboard box and selection frames) and five games – copy (Ctrl+C/V),
+    cut (Ctrl+X/V), undo (Ctrl+Z), rake (Ctrl+A, Delete) and a drill. `Games.make` hands their ids over, and
+    `Screens.GamesMenu.new(true)` lists them, all open at once. Keys match by keycode or key label, never physical
+    position (Czech QWERTZ swaps Z/Y). The drill adds Ctrl+W/T/N, Alt+Tab (focus out and back) and Alt+F4 (close
+    request caught while the drill runs) only outside the web build, since browsers keep those keys.
   - `typing.gd` holds the typing logic (lock the one closest to hiding by first letter, lenient accent folding, a
     miss keeps progress, Esc/Backspace releases the lock).
   - `config.gd` defines the ranks (Ježek / Veverka / Sova = Hedgehog / Squirrel / Owl), cover spots, map spots.

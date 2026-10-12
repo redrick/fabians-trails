@@ -22,10 +22,14 @@ func show_screen(name: String, arg: String) -> void:
 			screen = Screens.Book.new(arg)
 		"games":
 			screen = Screens.GamesMenu.new()
+		"keys":
+			screen = Screens.GamesMenu.new(true)
 		"game":
 			screen = Games.make(arg)
 		"trail":
 			screen = Trail.new(int(arg) if arg != "" else 1)
+		"race":
+			screen = Trail.new(int(arg), true)
 		_:
 			screen = Screens.Title.new()
 	screen.goto.connect(show_screen, CONNECT_DEFERRED)

@@ -9,6 +9,7 @@ const COUNT := {"jezek": 0, "veverka": 1, "sova": 2}
 
 var id := ""
 var bg := ""
+var menu := "games"
 var prof := "veverka"
 var big := 1.0
 var speed := 1.0
@@ -45,7 +46,7 @@ func _ready() -> void:
 	counter.position = Vector2(1640, 20)
 	hud.add_child(counter)
 	var back := UI.tbutton("back", 40, UI.GREEN)
-	back.pressed.connect(func(): goto.emit("games", ""))
+	back.pressed.connect(func(): goto.emit(menu, ""))
 	back.position = Vector2(40, 950)
 	hud.add_child(back)
 	setup()
@@ -120,7 +121,7 @@ func finish() -> void:
 	Save.set_game(id, cones)
 	Sound.play("fanfare")
 	Sound.say("ui_game_done")
-	_enter = func(): goto.emit("games", "")
+	_enter = func(): goto.emit(menu, "")
 	var o := Node2D.new()
 	o.z_index = 400
 	var dim := ColorRect.new()
@@ -146,8 +147,8 @@ func finish() -> void:
 	var h := HBoxContainer.new()
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
 	h.add_theme_constant_override("separation", 30)
-	var games := UI.tbutton("games", 48)
-	games.pressed.connect(func(): goto.emit("games", ""))
+	var games := UI.tbutton(menu, 48)
+	games.pressed.connect(func(): goto.emit(menu, ""))
 	var again := UI.tbutton("again", 48, UI.GREEN)
 	again.pressed.connect(func(): goto.emit("game", id))
 	h.add_child(games)
@@ -160,7 +161,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if done and event.pressed and event.keycode in [KEY_ENTER, KEY_KP_ENTER] and _enter.is_valid():
 		_enter.call()
 	elif event.pressed and event.keycode == KEY_ESCAPE:
-		goto.emit("games", "")
+		goto.emit(menu, "")
 
 
 func _demo() -> void:

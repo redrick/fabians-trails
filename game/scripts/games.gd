@@ -9,6 +9,8 @@ const ICON := {
 
 
 static func make(id: String) -> MiniGame:
+	if id in KeyGames.ORDER:
+		return KeyGames.make(id)
 	match id:
 		"leaves":
 			return Leaves.new()
@@ -371,6 +373,7 @@ class Orchard extends MiniGame:
 			_add("jablko", p, 0.42)
 		for p in Games.ground_spots(nuts, Rect2(1050, 900, 250, 80), 110.0):
 			_add("orech", p, 0.42)
+		total = targets.size()
 
 	func _add(kind: String, at: Vector2, s: float) -> void:
 		var sp := UI.sprite("res://assets/atlas/%s.png" % kind, at, s * big)

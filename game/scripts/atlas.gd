@@ -177,3 +177,19 @@ func ids_in_tab(tab: String) -> Array:
 
 func station_count(n: int) -> int:
 	return trail(n).stations.size()
+
+
+# Race the sun time limit: every station's finds at their average word length, plus the finale sign. Built
+# from averages, not the words a run happens to pick, so every run of a trail on a rank gets the same limit.
+func race_limit(n: int, profile_id: String, lang := "") -> float:
+	var p: Dictionary = Config.PROFILES[profile_id]
+	var rate: Dictionary = Config.RACE[profile_id]
+	var per_find := func(letters: float) -> float: return rate.per_word + rate.per_letter * letters
+	var total: float = per_find.call(float(target_for(n, profile_id, lang).length()))
+	for s in station_count(n):
+		var ids := finds_for(n, s, profile_id)
+		var letters := 0.0
+		for id in ids:
+			letters += word_for(id, profile_id, lang).length()
+		total += p.per_station * per_find.call(letters / maxi(ids.size(), 1))
+	return ceilf(total / 5.0) * 5.0

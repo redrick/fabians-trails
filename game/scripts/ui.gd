@@ -202,3 +202,34 @@ static func backdrop(path: String) -> Node2D:
 		sp.scale = Vector2(1920.0 / t.get_width(), 1080.0 / t.get_height())
 	root.add_child(sp)
 	return root
+
+
+# A race medal drawn in code: ribbon, a gold / silver / bronze disc and a star. Level 0 is an empty outline.
+class Medal extends Control:
+	const COLOURS := [Color(0, 0, 0, 0), Color("c98a4b"), Color("c9ced6"), Color("f2c230")]
+	var level := 0
+
+	func _init(medal: int, px := 90.0) -> void:
+		level = clampi(medal, 0, 3)
+		custom_minimum_size = Vector2(px, px)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var s := size.x
+		var c := Vector2(s / 2, s * 0.6)
+		var r := s * 0.36
+		var ink := Color(UI.INK, 1.0 if level > 0 else 0.35)
+		if level > 0:
+			for side in [-1, 1]:
+				var ribbon := PackedVector2Array([Vector2(s / 2 + side * s * 0.04, 0), Vector2(s / 2 + side * s * 0.3, 0),
+					c + Vector2(side * r * 0.7, -r * 0.5), c + Vector2(side * r * 0.05, -r * 0.6)])
+				draw_colored_polygon(ribbon, Color("c8483e") if side < 0 else Color("3f7fbf"))
+			draw_circle(c, r, COLOURS[level])
+			draw_circle(c, r * 0.72, COLOURS[level].lightened(0.25))
+		var star := PackedVector2Array()
+		for i in 10:
+			var a := -PI / 2 + i * PI / 5
+			star.append(c + Vector2(cos(a), sin(a)) * r * (0.5 if i % 2 == 0 else 0.22))
+		if level > 0:
+			draw_colored_polygon(star, COLOURS[level].darkened(0.25))
+		draw_arc(c, r, 0, TAU, 48, ink, maxf(2.0, s * 0.04))

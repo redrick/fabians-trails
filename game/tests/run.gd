@@ -58,8 +58,10 @@ func _run() -> void:
 	test_save()
 	test_assets()
 	await test_trails()
+	await test_race()
 	await test_screens()
 	await test_games()
+	await test_keys()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_save.json"))
 	print("%d checks, %d failures" % [checks, failures])
 	get_tree().quit(1 if failures > 0 else 0)
@@ -257,13 +259,13 @@ func type_word(trail: Trail, w: String) -> void:
 		trail._on_char(ch)
 
 
-func play_trail(n: int, prof: String, lang: String, type_all: bool) -> Trail:
+func play_trail(n: int, prof: String, lang: String, type_all: bool, race := false) -> Trail:
 	save.data = save.defaults()
 	save.set_lang(lang)
 	save.current = "alica"
 	save.set_profile("alica", prof)
 	save.data.players.alica.unlocked = n
-	var trail := Trail.new(n)
+	var trail := Trail.new(n, race)
 	get_tree().root.add_child(trail)
 	await frames(2)
 	var guard := 0
@@ -308,6 +310,65 @@ func test_trails() -> void:
 	lazy.queue_free()
 	Engine.time_scale = 1.0
 	await frames(2)
+
+
+func test_race() -> void:
+	for l in Text.LANGS:
+		for k in ["ui_race", "ui_race_won", "ui_time_up"]:
+			check(ResourceLoader.exists("res://assets/voice/%s/%s.ogg" % [l, k]), "race voice %s/%s" % [l, k])
+	check(Config.medal_for(60, 100) == 3 and Config.medal_for(80, 100) == 2 and Config.medal_for(95, 100) == 1, "medals by time used")
+	check(Config.medal_for(101, 100) == 0 and Config.clock(83.2) == "1:24" and Config.clock(-3) == "0:00", "too slow = no medal, clock text")
+	for n in range(1, Config.TRAIL_COUNT + 1):
+		for prof in Config.PROFILE_ORDER:
+			for lang in Text.LANGS:
+				var limit: float = atlas.race_limit(n, prof, lang)
+				check(limit >= 30.0 and limit <= 400.0 and fmod(limit, 5.0) == 0.0, "race limit %d %s/%s = %d s" % [n, prof, lang, limit])
+	save.data = save.defaults()
+	save.current = "alica"
+	check(not save.finish_race(1, 0, 50.0) and save.race_medal(1) == 0 and save.race_best(1) == 0.0, "sunset is no record")
+	check(save.finish_race(1, 1, 90.0) and save.finish_race(1, 3, 60.0), "faster finish = new record")
+	check(not save.finish_race(1, 2, 70.0) and save.race_medal(1) == 3 and save.race_best(1) == 60.0, "best medal and time kept")
+	save.load_data()
+	check(save.race_medal(1) == 3 and save.race_best(1) == 60.0, "race roundtrip")
+	Engine.time_scale = 6.0
+	for run in [[1, "veverka", "cs"], [3, "jezek", "en"], [6, "sova", "cs"]]:
+		var n: int = run[0]
+		var trail := await play_trail(n, run[1], run[2], true, true)
+		var planned: int = Config.PROFILES[run[1]].per_station * trail.data.stations.size()
+		check(trail.phase == "over" and trail.race_left > 0.0, "race %d %s: finished in time (%.0f s left of %.0f)" % [n, run[1], trail.race_left, trail.race_limit])
+		check(trail.caught == planned and trail.appeared == planned, "race %d: no rare finds, every find caught (%d/%d)" % [n, trail.caught, planned])
+		check(save.race_medal(n) > 0 and save.race_best(n) > 0.0, "race %d: medal and time saved" % n)
+		check(not save.is_done(n) and not save.has_keepsake(trail.data.keepsake.id), "race %d: no keepsake, trail progress untouched" % n)
+		trail.queue_free()
+		await frames(2)
+	save.data = save.defaults()
+	save.current = "alica"
+	var slow := Trail.new(1, true)
+	get_tree().root.add_child(slow)
+	var guard := 0
+	while slow.active().is_empty() and guard < 400:
+		guard += 1
+		slow.cooldown = minf(slow.cooldown, 0.2)
+		await frames(1)
+	check(slow.active().size() >= 1, "race: finds appear after the countdown")
+	await get_tree().create_timer(3.0).timeout
+	check(slow.active().size() >= 1 and slow._missed.is_empty(), "race: finds wait instead of hiding")
+	slow.race_left = 0.5
+	await get_tree().create_timer(1.0).timeout
+	check(slow.phase == "over" and save.race_medal(1) == 0, "race: sunset stops the trail, no medal")
+	slow.queue_free()
+	Engine.time_scale = 1.0
+	await frames(2)
+	save.finish_trail(1, 2, "cone")
+	Screens.Map.race_mode = true
+	var map := Screens.Map.new()
+	get_tree().root.add_child(map)
+	await frames(1)
+	var medals := map.get_children().filter(func(c): return c is UI.Medal)
+	check(medals.size() == Config.TRAIL_COUNT, "race map: every trail open with a medal slot (%d)" % medals.size())
+	map.queue_free()
+	Screens.Map.race_mode = false
+	await frames(1)
 
 
 func test_screens() -> void:
@@ -385,5 +446,110 @@ func test_games() -> void:
 	menu.queue_free()
 	for l in Text.LANGS:
 		for id in Games.ORDER:
+			check(ResourceLoader.exists("res://assets/voice/%s/intro_%s.ogg" % [l, id]), "intro voice %s/%s" % [l, id])
+	save.data = save.defaults()
+
+
+func combo(code: int, ctrl := true, alt := false, label := KEY_NONE) -> InputEventKey:
+	var e := InputEventKey.new()
+	e.pressed = true
+	e.keycode = code
+	e.key_label = label
+	e.ctrl_pressed = ctrl
+	e.alt_pressed = alt
+	return e
+
+
+func test_keys() -> void:
+	save.data = save.defaults()
+	save.current = "alica"
+	check(KeyGames.hit(combo(KEY_C), [KEY_CTRL, KEY_C]), "Ctrl+C matches")
+	check(not KeyGames.hit(combo(KEY_C, false), [KEY_CTRL, KEY_C]), "plain C is not Ctrl+C")
+	check(not KeyGames.hit(combo(KEY_C, true, true), [KEY_CTRL, KEY_C]), "Ctrl+Alt+C is not Ctrl+C")
+	check(KeyGames.hit(combo(KEY_NONE, true, false, KEY_Z), [KEY_CTRL, KEY_Z]), "Ctrl+Z matches by key label")
+	check(not KeyGames.hit(combo(KEY_Y), [KEY_CTRL, KEY_Z]), "Ctrl+Y is not undo")
+	check(KeyGames.hit(combo(KEY_DELETE, false), [KEY_DELETE]), "Delete matches")
+	check(KeyGames.hit(combo(KEY_TAB, false, true), [KEY_ALT, KEY_TAB]), "Alt+Tab matches")
+	check(not KeyGames.is_shortcut_try(combo(KEY_CTRL)), "Ctrl alone is not a try")
+	check(KeyGames.Drill.pool("veverka", true).all(func(k): return not k in KeyGames.DESKTOP), "web drill has no browser shortcuts")
+	check(KeyGames.Drill.pool("sova", false).has("close"), "desktop drill asks for Alt+F4")
+	for id in KeyGames.SHORTCUTS:
+		for l in Text.LANGS:
+			check(Text.t("key_" + id, l) != "", "label key_%s/%s" % [id, l])
+			check(ResourceLoader.exists("res://assets/voice/%s/act_%s.ogg" % [l, id]), "action voice %s/%s" % [l, id])
+		check(ResourceLoader.exists("res://assets/%s.png" % KeyGames.SHORTCUTS[id][1]), "picture for %s" % id)
+	for prof in ["jezek", "veverka", "sova"]:
+		save.set_profile("alica", prof)
+		for id in KeyGames.ORDER:
+			var g: MiniGame = Games.make(id)
+			get_tree().root.add_child(g)
+			await frames(2)
+			check(g.total > 0 and g.menu == "keys", "%s/%s has targets" % [id, prof])
+			match id:
+				"copy":
+					g.on_key(combo(KEY_V))
+					check(g.mistakes == 0 and g.got == 0, "paste with an empty clipboard does nothing")
+					while not g.holes.is_empty():
+						var hole: Sprite2D = g.holes[0]
+						var src: Sprite2D = g.sources.filter(func(s): return s.get_meta("kind") == hole.get_meta("kind"))[0]
+						g.on_click(src.position)
+						g.on_key(combo(KEY_C))
+						g.on_click(hole.position)
+						g.on_key(combo(KEY_V))
+				"cut":
+					while not g.homes.is_empty():
+						var home: Sprite2D = g.homes[0]
+						var a: Sprite2D = g.animals.filter(func(x): return x.get_meta("id") == home.get_meta("id"))[0]
+						g.select(a)
+						g.on_key(combo(KEY_X))
+						g.select(home)
+						g.on_key(combo(KEY_V))
+				"undo":
+					g.cooldown = 999.0
+					while g.got < g.total:
+						g.mess(g.items.pick_random(), true)
+						g.on_key(combo(KEY_NONE, true, false, KEY_Z))
+				"rake":
+					while g.got < g.total:
+						g.new_round()
+						g.on_key(combo(KEY_A))
+						g.on_key(combo(KEY_DELETE, false))
+				"drill":
+					var n := 0
+					while g.got < g.total and n < 40:
+						n += 1
+						match g.current:
+							"switch":
+								g._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
+								g._notification(Node.NOTIFICATION_APPLICATION_FOCUS_IN)
+							"close":
+								g._notification(Node.NOTIFICATION_WM_CLOSE_REQUEST)
+							_:
+								var keys: Array = KeyGames.SHORTCUTS[g.current][0]
+								g.on_key(combo(keys[-1], KEY_CTRL in keys, KEY_ALT in keys))
+			await frames(3)
+			check(g.done and g.got == g.total, "%s/%s finishes when everything is done (%d/%d)" % [id, prof, g.got, g.total])
+			check(save.game_cones(id) == 3, "%s/%s perfect play gives three cones" % [id, prof])
+			g.queue_free()
+			await frames(1)
+	save.set_profile("alica", "veverka")
+	var cut: MiniGame = Games.make("cut")
+	get_tree().root.add_child(cut)
+	await frames(2)
+	cut.select(cut.animals[0])
+	cut.on_key(combo(KEY_X))
+	var other: Sprite2D = cut.homes.filter(func(h): return h.get_meta("id") != cut.clip.get_meta("id"))[0]
+	cut.select(other)
+	cut.on_key(combo(KEY_V))
+	check(cut.mistakes == 1 and cut.got == 0, "pasting on the wrong shadow is a mistake")
+	cut.queue_free()
+	var menu := Screens.GamesMenu.new(true)
+	get_tree().root.add_child(menu)
+	await frames(1)
+	var disabled := menu.find_children("*", "Button", true, false).filter(func(b): return b.disabled)
+	check(disabled.is_empty(), "every magic-keys game is open")
+	menu.queue_free()
+	for l in Text.LANGS:
+		for id in KeyGames.ORDER:
 			check(ResourceLoader.exists("res://assets/voice/%s/intro_%s.ogg" % [l, id]), "intro voice %s/%s" % [l, id])
 	save.data = save.defaults()

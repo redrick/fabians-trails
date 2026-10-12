@@ -53,6 +53,17 @@ const CLEAN_HITS_FOR_SPEEDUP := 3
 const PAWS_FOR_RARE := 4
 
 
+# Race the sun: the time limit is per_word + per_letter * letters for every find and the finale sign,
+# rounded up to 5 s. A medal for finishing with this share of the limit used: gold, silver, bronze.
+const RACE := {
+	"jezek": {"per_word": 4.0, "per_letter": 1.0},
+	"veverka": {"per_word": 2.5, "per_letter": 1.0},
+	"sova": {"per_word": 2.5, "per_letter": 0.6},
+}
+const MEDAL_AT := [0.7, 0.85, 1.0]
+const RACE_SPAWN_GAP := 0.5
+
+
 static func covers_for(station: String) -> Array:
 	return STATION_COVERS.get(station, COVERS)
 
@@ -64,3 +75,18 @@ static func cones_for(caught: int, appeared: int) -> int:
 	if r >= 0.9:
 		return 3
 	return 2 if r >= 0.6 else 1
+
+
+# 3 = gold, 2 = silver, 1 = bronze, 0 = the sun set first.
+static func medal_for(used: float, limit: float) -> int:
+	if limit <= 0.0 or used > limit:
+		return 0
+	for i in MEDAL_AT.size():
+		if used <= limit * MEDAL_AT[i]:
+			return 3 - i
+	return 1
+
+
+static func clock(seconds: float) -> String:
+	var s := maxi(0, ceili(seconds))
+	return "%d:%02d" % [s / 60, s % 60]

@@ -4,6 +4,8 @@
 # with pauses after "!" and numbers spelled out, then warmed up (EQ, gentle compression, a small room).
 # English = Piper en_GB-alba-medium. Sets up tools/.piper and tools/.edge (venvs + models) on first run.
 # Real recordings (Andrej/Alica) replace these files one-for-one, same names.
+# An optional regex argument voices only the UI lines whose key matches it and keeps every other file,
+# e.g. tools/make_voice.sh '^(intro_(copy|cut)|act_)'.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT=game/assets/voice
@@ -11,6 +13,7 @@ DATA=game/data
 PIPER=tools/.piper
 MODELS="https://huggingface.co/rhasspy/piper-voices/resolve/main"
 EDGE=tools/.edge
+ONLY="${1:-}"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -81,7 +84,14 @@ trail_lines() {
 voice_lang() {
 	local col=$1
 	SLOW=1
-	OUT="$ROOT/$LANG_ID"; mkdir -p "$OUT"; rm -f "$OUT"/*.ogg
+	OUT="$ROOT/$LANG_ID"; mkdir -p "$OUT"
+	if [ -n "$ONLY" ]; then
+		for k in "${!UI[@]}"; do
+			if [[ $k =~ $ONLY ]]; then say "$k" "${UI[$k]}"; fi
+		done
+		return
+	fi
+	rm -f "$OUT"/*.ogg
 	for k in "${!LETTERS[@]}"; do say "letter_$k" "${LETTERS[$k]}"; done
 	for k in "${!UI[@]}"; do say "$k" "${UI[$k]}"; done
 	while IFS='|' read -r id name; do say "name_$id" "$(echo "$name" | cap)."; done < <(data_lines "$col")
@@ -107,12 +117,35 @@ declare -A UI=(
 	[ui_press_letter]="Zmáčkni písmenko z cedulky!"
 	[ui_wrong_place]="Tahle patří jinam."
 	[ui_game_done]="Hotovo! Šikula!"
+	[ui_race]="Závod se sluncem! Projdi stezku, než zapadne slunce."
+	[ui_race_won]="Hotovo včas! Paráda!"
+	[ui_time_up]="Slunce zapadlo. Zkus to znovu!"
 	[intro_joey]="Veď Joeyho myší a najdi všechny šišky."
 	[intro_leaves]="Klikni na listy, než dopadnou na zem."
 	[intro_sort]="Chyť věc a přetáhni ji. Jedlé do košíku, jedovaté k foťáku."
 	[intro_fog]="Drž tlačítko a rozháněj mlhu. Co se pod ní schovává?"
 	[intro_orchard]="Klikni dvakrát rychle za sebou na jablko nebo ořech."
 	[intro_photo]="Zamiř rámečkem na ptáka a klikni."
+	[intro_copy]="Klikni na stromek a zmáčkni kontrol plus cé. Pak klikni na prázdné místo a zmáčkni kontrol plus vé."
+	[intro_cut]="Klikni na zvíře a zmáčkni kontrol plus iks. Pak klikni na jeho stín a zmáčkni kontrol plus vé."
+	[intro_undo]="Sojka dělá nepořádek. Zmáčkni kontrol plus zet a vrať všechno zpátky."
+	[intro_rake]="Zmáčkni kontrol plus á a vyber všechno listí. Pak ho smaž klávesou dylít."
+	[intro_drill]="Co se má stát? Zmáčkni správnou zkratku."
+	[act_copy]="Kopírovat."
+	[act_paste]="Vložit."
+	[act_cut]="Vyjmout."
+	[act_undo]="Zpět."
+	[act_selectall]="Vybrat vše."
+	[act_save]="Uložit."
+	[act_find]="Najít."
+	[act_print]="Tisk."
+	[act_rename]="Přejmenovat."
+	[act_delete]="Smazat."
+	[act_closetab]="Zavřít kartu."
+	[act_newtab]="Nová karta."
+	[act_newwindow]="Nové okno."
+	[act_switch]="Přepnout okno."
+	[act_close]="Zavřít program."
 )
 voice_lang 2
 
@@ -132,12 +165,35 @@ UI=(
 	[ui_press_letter]="Press the letter on the sign!"
 	[ui_wrong_place]="That one goes somewhere else."
 	[ui_game_done]="All done! Well done!"
+	[ui_race]="Race the sun! Finish the trail before sunset."
+	[ui_race_won]="Made it in time! Brilliant!"
+	[ui_time_up]="The sun has set. Try again!"
 	[intro_joey]="Lead Joey with the mouse and find all the cones."
 	[intro_leaves]="Click the leaves before they land."
 	[intro_sort]="Grab a thing and drag it. Food goes in the basket, poisonous things to the camera."
 	[intro_fog]="Hold the button and wipe the fog away. What is hiding under it?"
 	[intro_orchard]="Click twice quickly on an apple or a walnut."
 	[intro_photo]="Point the frame at a bird and click."
+	[intro_copy]="Click a tree and press control C. Then click an empty spot and press control V."
+	[intro_cut]="Click an animal and press control X. Then click its shadow and press control V."
+	[intro_undo]="The jay makes a mess. Press control Z to put everything back."
+	[intro_rake]="Press control A to select all the leaves. Then press delete to clear them away."
+	[intro_drill]="What should happen? Press the right shortcut."
+	[act_copy]="Copy."
+	[act_paste]="Paste."
+	[act_cut]="Cut."
+	[act_undo]="Undo."
+	[act_selectall]="Select all."
+	[act_save]="Save."
+	[act_find]="Find."
+	[act_print]="Print."
+	[act_rename]="Rename."
+	[act_delete]="Delete."
+	[act_closetab]="Close tab."
+	[act_newtab]="New tab."
+	[act_newwindow]="New window."
+	[act_switch]="Switch window."
+	[act_close]="Close program."
 )
 voice_lang 3
 
