@@ -54,9 +54,9 @@ itch.io (HTML5). Every text is shown in both languages; the chosen language is t
   group: `people` (rangers, Joey), `fabian` (Fabián, covers, keepsakes, UI icons), `animals`, `fungi`, `plants`,
   `places_a`/`places_b` (backgrounds, map, atlas book). Run
   `art/.venv/bin/python art/export_assets.py [--module name] [name-filter]`, then reimport.
-- `tools/make_voice.sh` – CZ/EN voice lines with Piper neural TTS (Czech `cs_CZ-jirka-medium`, English
-  `en_GB-alba-medium`), read from the data files; sets up `tools/.piper` (venv + models, gitignored) on first run and
-  takes ~3 min. Reimport afterwards. Recordings replace the files one for one, keeping the same names.
+- `tools/make_voice.sh` – CZ/EN voice lines read from the data files: Czech = Microsoft `cs-CZ-VlastaNeural` via
+  edge-tts (needs internet), English = Piper `en_GB-alba-medium`; sets up `tools/.piper` and `tools/.edge` (venvs +
+  models, gitignored) on first run. An optional key regex voices only matching UI lines. Reimport afterwards. Recordings replace the files one for one, keeping the same names.
 - `assets/music/track_1..3.ogg` – Kevin MacLeod, CC BY 4.0 (see `CREDITS.txt`, credited on the title screen).
   `Sound` plays them as a playlist and ducks them while a voice line plays.
 

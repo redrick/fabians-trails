@@ -56,6 +56,10 @@ only clock, and every trail ends with Fabián.
   rare, such as a stag, a fire salamander or a pygmy owl.
 - **Cones and keepsakes.** Fabián rewards each trail with 1–3 cones and a keepsake: his lucky cone, a silver coin,
   a horseshoe…
+- **Race the sun (Závod se sluncem).** An extra for children who are getting quick. Switch it on in the map and any
+  trail, even a locked one, becomes a race against a countdown. Nothing hides, so every run has the same words; finish
+  early for a gold, silver or bronze medal and beat your best time. If the sun sets first, the race stops. The normal
+  trails stay calm and can't be lost.
 - **Three ranks**, chosen per player:
 
   | Rank | Types | For |
@@ -81,6 +85,17 @@ only clock, and every trail ends with Fabián.
   | In the orchard | double click |
   | Photo hunt | moving targets |
 
+- **Magic keys (Kouzelné klávesy):** five keyboard-shortcut games, all open from the start. Big on-screen keycaps
+  light up while held:
+
+  | Game | Shortcut |
+  |---|---|
+  | Planting trees | Ctrl + C, Ctrl + V |
+  | Who lives where? | Ctrl + X, Ctrl + V |
+  | The naughty jay | Ctrl + Z |
+  | Raking leaves | Ctrl + A, Delete |
+  | Quick keys | all of them, plus window shortcuts in the desktop builds |
+
 - **One language at a time.** Switch between Czech and English whenever you like. The language you choose is the
   one you type and hear.
 - **Voices and music:** every line is voiced, with calm music and a forest ambience underneath.
@@ -93,6 +108,10 @@ only clock, and every trail ends with Fabián.
 <tr>
 <td><img src="docs/screenshots/games.jpg" alt="Joey's games menu"></td>
 <td><img src="docs/screenshots/sort.jpg" alt="Sorting game: food into the basket, poisonous mushrooms to the camera"></td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/copy.jpg" alt="Planting trees: copy and paste with Ctrl + C and Ctrl + V"></td>
+<td><img src="docs/screenshots/race.jpg" alt="Race the sun with a countdown clock"></td>
 </tr>
 </table>
 
@@ -111,7 +130,7 @@ godot --path game
 |---|---|
 | Engine | Godot 4.6.3, GDScript only, GL Compatibility renderer, no plugins |
 | Art | Drawn in code with Python and reportlab (`art/`), exported to PNG |
-| Voices | Piper neural text-to-speech, generated from the game's data files |
+| Voices | Neural text-to-speech generated from the game's data files: edge-tts (Czech), Piper (English) |
 | Data | Plain text files that are easy to edit: species, trails and facts in `game/data/` |
 
 ```sh
@@ -139,9 +158,9 @@ docs/          screenshots
 - **Legend:** Fabián, the forest spirit of Brdy, from local folklore as collected by Jan Čáka and others
 - **Music:** Kevin MacLeod ([incompetech.com](https://incompetech.com)): *Porch Swing Days (slower)*, *Lasting Hope*
   and *Dreamer*. Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-- **Voices:** generated with [Piper](https://github.com/OHF-Voice/piper1-gpl):
-  - Czech voice *jirka* (dataset CC0)
-  - English voice *alba*, from the University of Edinburgh CSTR dataset
+- **Voices:** generated with text-to-speech:
+  - Czech: Microsoft neural voice *Vlasta*, via [edge-tts](https://github.com/rany2/edge-tts)
+  - English: [Piper](https://github.com/OHF-Voice/piper1-gpl) voice *alba*, from the University of Edinburgh CSTR dataset
     ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
 - **Fonts:** Shantell Sans, Patrick Hand, Comic Neue and Bangers, all under the
   [SIL Open Font License](https://openfontlicense.org)

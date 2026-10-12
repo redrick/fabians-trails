@@ -176,7 +176,7 @@
   .strip img { width: 84px; background: #fff; border: 2.5px solid var(--line); border-radius: 14px; padding: 6px; transition: rotate .2s, scale .2s; }
   .strip img:hover { rotate: -6deg; scale: 1.12; }
 
-  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; text-align: center; }
+  .facts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 40px; text-align: center; }
   .fact b { display: block; font-family: "Shantell Sans"; font-weight: 800; font-size: 2.6rem; color: var(--moss); line-height: 1; }
   .fact span { color: var(--muted); }
 
@@ -185,6 +185,12 @@
   .games li { display: flex; gap: 12px; align-items: baseline; background: var(--paper); border: 2px solid var(--line); border-radius: 12px; padding: 8px 14px; }
   .games li b { font-family: "Shantell Sans"; color: var(--bark); }
   .games li span { color: var(--muted); margin-left: auto; text-align: right; }
+
+  .gamelist { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .gamelist li { display: flex; gap: 12px; align-items: baseline; background: #fff; border: 2px solid var(--line); border-radius: 12px; padding: 8px 14px; }
+  .gamelist li b { font-family: "Shantell Sans"; color: var(--bark); }
+  .gamelist li > span { color: var(--muted); margin-left: auto; text-align: right; font-family: "Shantell Sans"; font-weight: 700; }
+  .race { background: linear-gradient(var(--cream), #f8e3c4); }
 
   /* keepsakes / finale */
   .finale { background: linear-gradient(#e4efd9, var(--cream)); }
@@ -351,6 +357,7 @@
       <div class="fact"><b>6</b><span lang="en">trails from Hostomice</span><span lang="cs">stezek z Hostomic</span></div>
       <div class="fact"><b>66</b><span lang="en">species in the atlas</span><span lang="cs">druhů v atlasu</span></div>
       <div class="fact"><b>6</b><span lang="en">mouse mini-games</span><span lang="cs">her na myš</span></div>
+      <div class="fact"><b>5</b><span lang="en">keyboard-shortcut games</span><span lang="cs">her s klávesovými zkratkami</span></div>
       <div class="fact"><b>2</b><span lang="en">languages, fully voiced</span><span lang="cs">jazyky, vše namluvené</span></div>
     </div>
   </div>
@@ -370,6 +377,40 @@
         <li><b><span lang="en">In the orchard</span><span lang="cs">V sadu</span></b><span><span lang="en">double click</span><span lang="cs">dvojklik</span></span></li>
         <li><b><span lang="en">Photo hunt</span><span lang="cs">Fotolov</span></b><span><span lang="en">moving targets</span><span lang="cs">pohyblivé cíle</span></span></li>
       </ul>
+    </div>
+  </div>
+</section>
+
+<section class="keys">
+  <div class="wrap split">
+    <div>
+      <h2><span lang="en">Magic keys</span><span lang="cs">Kouzelné klávesy</span></h2>
+      <p class="lead"><span lang="en">Five little games for the keyboard shortcuts every computer user needs. Big keycaps light up while you hold them, and all five are open from the start.</span><span lang="cs">Pět malých her na klávesové zkratky, které se hodí každému, kdo pracuje s počítačem. Velké klávesy na obrazovce svítí, když je držíš, a všech pět her je otevřených hned od začátku.</span></p>
+      <ul class="gamelist">
+        <li><b><span lang="en">Planting trees</span><span lang="cs">Sázíme stromky</span></b><span>Ctrl + C, Ctrl + V</span></li>
+        <li><b><span lang="en">Who lives where?</span><span lang="cs">Kdo kde bydlí?</span></b><span>Ctrl + X, Ctrl + V</span></li>
+        <li><b><span lang="en">The naughty jay</span><span lang="cs">Zlobivá sojka</span></b><span>Ctrl + Z</span></li>
+        <li><b><span lang="en">Raking leaves</span><span lang="cs">Hrabání listí</span></b><span>Ctrl + A, Delete</span></li>
+        <li><b><span lang="en">Quick keys</span><span lang="cs">Rychlé klávesy</span></b><span><span lang="en">all the shortcuts</span><span lang="cs">všechny zkratky</span></span></li>
+      </ul>
+    </div>
+    <img class="shot tilt-r" src="screenshots/copy.jpg" alt="Planting trees: copy a spruce with Ctrl + C and paste it into an empty spot with Ctrl + V" loading="lazy">
+  </div>
+</section>
+
+<section class="race">
+  <div class="wrap split">
+    <img class="shot tilt-l" src="screenshots/race.jpg" alt="Race the sun: a countdown clock above the trail while the names are typed" loading="lazy">
+    <div>
+      <h2><span lang="en">Race the sun</span><span lang="cs">Závod se sluncem</span></h2>
+      <p class="lead" lang="en">For children who are getting quick at typing. Switch it on in the map and every trail, even locked ones,
+        turns into a race: 3, 2, 1, go! Finish before the sun sets.</p>
+      <p class="lead" lang="cs">Pro děti, kterým už psaní jde rychle. Zapni ho na mapě a z každé stezky, i ze zamčené, je závod:
+        3, 2, 1, teď! Stihni to, než zapadne slunce.</p>
+      <p lang="en">Nothing hides in a race, so every run has the same words and times can be compared. Finish fast for a gold, silver or
+        bronze medal and try to beat your own record. It is an extra: the normal trails stay calm and you still can't lose them.</p>
+      <p lang="cs">V závodě se nic neschovává, takže každý závod má stejná slova a časy se dají porovnat. Za rychlý cíl dostaneš zlatou,
+        stříbrnou nebo bronzovou medaili a můžeš překonávat svůj rekord. Je to bonus navíc: obyčejné stezky zůstávají klidné a prohrát se nedají.</p>
     </div>
   </div>
 </section>
@@ -402,6 +443,9 @@
       <figure><img class="shot" src="screenshots/orchard.jpg" alt="In the orchard mini-game" loading="lazy"><figcaption><span lang="en">In the orchard</span><span lang="cs">V sadu</span></figcaption></figure>
       <figure><img class="shot" src="screenshots/title.jpg" alt="Title screen: Fabián waving on the town square" loading="lazy"><figcaption><span lang="en">Hostomice town square</span><span lang="cs">Hostomické náměstí</span></figcaption></figure>
       <figure><img class="shot" src="screenshots/sort.jpg" alt="Sorting game" loading="lazy"><figcaption><span lang="en">Basket or camera?</span><span lang="cs">Do košíku, nebo foťáku?</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/keys.jpg" alt="Magic keys menu with five keyboard-shortcut games" loading="lazy"><figcaption><span lang="en">Magic keys</span><span lang="cs">Kouzelné klávesy</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/race.jpg" alt="Race the sun with a countdown clock" loading="lazy"><figcaption><span lang="en">Race the sun</span><span lang="cs">Závod se sluncem</span></figcaption></figure>
+      <figure><img class="shot" src="screenshots/race_medal.jpg" alt="Gold medal and a new record after a race" loading="lazy"><figcaption><span lang="en">Gold medal, new record!</span><span lang="cs">Zlatá medaile, nový rekord!</span></figcaption></figure>
     </div>
   </div>
 </section>
@@ -429,7 +473,7 @@ godot --path fabians-trails/game</pre>
       <ul>
         <li><span lang="en">Legend: Fabián, the forest spirit of Brdy, from local folklore as collected by Jan Čáka and others</span><span lang="cs">Pověst: Fabián, brdský lesní duch, z místního folklóru podle Jana Čáky a dalších</span></li>
         <li><span lang="en">Music</span><span lang="cs">Hudba</span>: Kevin MacLeod (<a href="https://incompetech.com">incompetech.com</a>), <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></li>
-        <li><span lang="en">Voices</span><span lang="cs">Hlasy</span>: <a href="https://github.com/OHF-Voice/piper1-gpl">Piper</a> · <span lang="en">Fonts</span><span lang="cs">Písma</span>: Shantell Sans, Patrick Hand (OFL)</li>
+        <li><span lang="en">Voices</span><span lang="cs">Hlasy</span>: <span lang="en">Czech</span><span lang="cs">česky</span> Microsoft Vlasta (<a href="https://github.com/rany2/edge-tts">edge-tts</a>), <span lang="en">English</span><span lang="cs">anglicky</span> <a href="https://github.com/OHF-Voice/piper1-gpl">Piper</a> · <span lang="en">Fonts</span><span lang="cs">Písma</span>: Shantell Sans, Patrick Hand (OFL)</li>
         <li><span lang="en">Built with</span><span lang="cs">Postaveno v</span> <a href="https://godotengine.org">Godot Engine</a></li>
       </ul>
     </div>
